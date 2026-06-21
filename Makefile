@@ -2,7 +2,7 @@
 SHELL      := /bin/bash
 ROS_DISTRO := jazzy
 WS_ROOT    := $(shell pwd)
-RUN        := cd $(WS_ROOT) && source /opt/ros/$(ROS_DISTRO)/setup.bash && uv run
+RUN        := cd $(WS_ROOT) && source /opt/ros/$(ROS_DISTRO)/setup.bash && export ISAAC_ROS_WS=$(WS_ROOT) && uv run
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/hpcx/ucx/lib:/opt/hpcx/ucc/lib
 
 # Colors
@@ -14,10 +14,14 @@ RESET=\033[0m
 
 .PHONY: all build debug builds pkg clean deps create-cpp create-py dev sync
 
-CMAKE_DEFAULT_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+CMAKE_DEFAULT_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 
 
 # 1. Build & Sync (Το sync ενημερώνει το venv βάσει του pyproject.toml)
-all: build sync
+all: build sync # rosdeps
+
+run:
+	@echo -e "$(C)Running Isaac ROS...$(RESET)"
+	$(RUN)
 
 activate:
 	@echo -e "$(C)Activating virtual environment...$(RESET)"
@@ -26,6 +30,10 @@ activate:
 sync:
 	@echo -e "$(C)Syncing virtual environment...$(RESET)"
 	uv sync
+
+rosdeps:
+	@echo -e "$(C)Installing rosdeps...$(RESET)"
+	rosdep update && rosdep install -i -r --from-paths src/isaac_ros_nvblox/ --rosdistro jazzy -y
 
 build:
 	$(RUN) colcon build \

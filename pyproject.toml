@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "nvidia-curobo[cu13-torch]",
+    "torchvision", # Χρειάζεται καθώς το nvblox_torch εξαρτάται από αυτό
+    "nvblox_torch",
 ]
 
 [tool.uv]
@@ -22,3 +24,7 @@ nvidia-curobo = { workspace = true }
 torch = [
   { index = "pytorch-cu130" }
 ]
+torchvision = [
+  { index = "pytorch-cu130" }
+]
+nvblox_torch = { url = "https://github.com/nvidia-isaac/nvblox/releases/download/v0.0.10/nvblox_torch-0.0.10+cu13ubuntu24-py3-none-linux_x86_64.whl" }
