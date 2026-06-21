@@ -4,4 +4,21 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "nvidia-curobo[cu13-torch]",
+]
+
+[tool.uv]
+workspace = { members = ["external/curobo"] }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+
+[tool.uv.sources]
+nvidia-curobo = { workspace = true }
+torch = [
+  { index = "pytorch-cu130" }
+]
