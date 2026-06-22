@@ -82,7 +82,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 ${PI}" />
       <geometry>
         <mesh
           filename="$(find oh_my_hans_description)/meshes/elfin_link1.STL" />
@@ -140,7 +140,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="${PI/2} 0 ${PI}" />
       <geometry>
         <mesh
           filename="$(find oh_my_hans_description)/meshes/elfin_link2.STL" />
@@ -198,7 +198,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 -${PI/2} -${PI/2}" />
       <geometry>
         <mesh
           filename="$(find oh_my_hans_description)/meshes/elfin_link3.STL" />
@@ -256,7 +256,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="${PI} ${PI} ${PI}" />
       <geometry>
         <mesh
           filename="$(find oh_my_hans_description)/meshes/elfin_link4.STL" />
@@ -314,7 +314,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="-${PI/2} 0 0" />
       <geometry>
         <mesh
           filename="$(find oh_my_hans_description)/meshes/elfin_link5.STL" />
