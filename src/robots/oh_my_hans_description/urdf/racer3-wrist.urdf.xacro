@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <!-- 
+    Author: LMS
+   -->
+
+  <xacro:include filename="$(find oh_my_hans_description)/urdf/common.model.xacro" />
+  <xacro:include
+    filename="$(find oh_my_hans_description)/urdf/racer3-wrist.transmission.xacro" />
+  <xacro:include
+    filename="$(find oh_my_hans_description)/urdf/racer3-wrist.gazebo.xacro" />
+
+  <xacro:macro name="racer3-wrist_robot"
+    params="
+    prefix
+    kinematics_params
+    transmission_hw_interface:=hardware_interface/PositionJointInterface
+    safety_limits:=false
+    safety_pos_margin:=0.15
+    safety_k_position:=20">
+
+    <xacro:racer3-wrist_transmission prefix="${prefix}" hw_interface="${transmission_hw_interface}" />
+    <xacro:racer3-wrist_gazebo prefix="${prefix}" />
+
+    <xacro:read_model_data
+      kinematics_params="${kinematics_params}" />
+
+    <link name="${prefix}base_link">
+      <inertial>
+        <origin xyz="-0.00227788070042482 -0.00123420975347735 0.0624227170360064" rpy="0 0 0" />
+        <mass value="1.62984418880799" />
+        <inertia ixx="0.00636789477652846" ixy="-2.81769690428589E-06" ixz="-7.62862065969977E-05"
+          iyy="0.00700400581464894" iyz="-3.84855032438523E-05" izz="0.00283764341486332" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/base_link.STL" />
+        </geometry>
+        <xacro:c_white />
+      </visual>
+      <collision>
+        <xacro:col_mask_0 />
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/base_link.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}link_5">
+      <inertial>
+        <origin xyz="8.42234791683474E-06 0.000438242230281476 0.0364200996149726" rpy="0 0 0" />
+        <mass value="0.805335362671064" />
+        <inertia ixx="0.000450875634718755" ixy="-1.62647753017942E-07" ixz="5.47682000717453E-08"
+          iyy="0.000482126973530289" iyz="2.28779867178509E-06" izz="0.000531776234546048" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/Link5.STL" />
+        </geometry>
+        <xacro:c_white />
+      </visual>
+      <collision>
+        <xacro:col_mask_1 />
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/Link5.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}link_6">
+      <inertial>
+        <origin xyz="5.64165774402925E-05 -4.33361315668251E-07 0.00365583421206228" rpy="0 0 0" />
+        <mass value="0.0730000000000003" />
+        <inertia ixx="6.94455842253111E-06" ixy="-3.96352989850563E-10" ixz="-3.15927343591289E-08"
+          iyy="6.89301150818147E-06" iyz="3.03515042445876E-10" izz="9.67078778400452E-06" />
+      </inertial>
+      <visual>
+        <xacro:c_d_grey />
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/Link6.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+        </material>
+      </visual>
+      <xacro:c_white />
+      <collision>
+        <xacro:col_mask_0 />
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/Link6.STL" />
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="${prefix}tool0" />
+
+    <joint name="${prefix}joint_5" type="revolute">
+      <parent link="${prefix}base_link" />
+      <child link="${prefix}link_5" />
+      <origin xyz="${joint_5_x} ${joint_5_y} ${joint_5_z}"
+        rpy="${joint_5_roll} ${joint_5_pitch} ${joint_5_yaw}" />
+      <axis xyz="${axis_5_x} ${axis_5_y} ${axis_5_z}" />
+      <limit lower="${joint_5_lower_limit}" upper="${joint_5_upper_limit}"
+        effort="${joint_5_effort_limit}" velocity="10.471975512" />
+      <xacro:if value="${safety_limits}">
+        <safety_controller soft_lower_limit="${joint_5_lower_limit + safety_pos_margin}"
+          soft_upper_limit="${joint_5_upper_limit - safety_pos_margin}"
+          k_position="${safety_k_position}" k_velocity="0.0" />
+      </xacro:if>
+    </joint>
+
+    <joint name="${prefix}joint_6" type="revolute">
+      <parent link="${prefix}link_5" />
+      <child link="${prefix}link_6" />
+      <origin xyz="${joint_6_x} ${joint_6_y} ${joint_6_z}"
+        rpy="${joint_6_roll} ${joint_6_pitch} ${joint_6_yaw}" />
+      <axis xyz="${axis_6_x} ${axis_6_y} ${axis_6_z}" />
+      <limit lower="${joint_6_lower_limit}" upper="${joint_6_upper_limit}"
+        effort="${joint_6_effort_limit}" velocity="15.7079632679" />
+      <xacro:if value="${safety_limits}">
+        <safety_controller soft_lower_limit="${joint_6_lower_limit + safety_pos_margin}"
+          soft_upper_limit="${joint_6_upper_limit - safety_pos_margin}"
+          k_position="${safety_k_position}" k_velocity="0.0" />
+      </xacro:if>
+    </joint>
+
+    <joint name="${prefix}joint_tool0" type="fixed">
+      <origin xyz="${joint_tool0_x} ${joint_tool0_y} ${joint_tool0_z}"
+        rpy="${joint_tool0_roll} ${joint_tool0_pitch} ${joint_tool0_yaw}" />
+      <parent link="${prefix}link_6" />
+      <child link="${prefix}tool0" />
+    </joint>
+
+
+  </xacro:macro>
+
+</robot>

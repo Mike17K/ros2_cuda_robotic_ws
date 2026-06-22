@@ -17,7 +17,7 @@ RESET=\033[0m
 CMAKE_DEFAULT_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 
 
 # 1. Build & Sync (Το sync ενημερώνει το venv βάσει του pyproject.toml)
-all: build sync # rosdeps
+all: sync build # rosdeps
 
 run:
 	@echo -e "$(C)Running Isaac ROS...$(RESET)"

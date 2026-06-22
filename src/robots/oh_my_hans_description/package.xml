@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+    <name>oh_my_hans_description</name>
+    <version>1.0.0</version>
+    <description>The oh_my_hans_description package</description>
+    <author email="gkrizis@lms.mech.upatras.gr">Christos Gkrizis</author>
+    <maintainer email="gkrizis@lms.mech.upatras.gr">Christos Gkrizis</maintainer>
+
+    <license>TODO</license>
+    <buildtool_depend>ament_cmake</buildtool_depend>
+  
+    <depend>urdf</depend>
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>
+

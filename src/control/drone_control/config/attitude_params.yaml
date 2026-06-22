@@ -1,0 +1,15 @@
+# Attitude / SO(3) controller parameters
+# Inertia
+attitude_inertia: 0.017 # approximate Ixx/Iyy (kg*m^2)
+attitude_inertia_z: 0.02 # approximate Izz (kg*m^2)
+
+# Geometric attitude gains
+K_R_attitude: 8.0
+K_R_yaw: 1.0
+
+# Attitude limits and mapping
+max_attitude_deg: 15.0
+yaw_gain: 20.0
+torque_to_speed_gain: 1.7
+# For yaw control: joystick maps to angular velocity (deg/s) when IMU is present
+max_yaw_rate_deg: 90.0

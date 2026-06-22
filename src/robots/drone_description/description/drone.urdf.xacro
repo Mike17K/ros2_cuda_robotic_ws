@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="drone">
+
+    <xacro:property name="robot_namespace" value="drone" />
+
+    <xacro:include filename="components/shapes.xacro" />
+    <xacro:include filename="components/rotor.xacro" />
+    <!-- <xacro:include filename="ardupilot_plugin.xacro" /> -->
+
+    <link name="base_footprint" />
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint" />
+        <child link="base_link" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </joint>
+
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="0.3 0.3 0.05" />
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="0.3 0.3 0.05" />
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="1.0" x="0.3" y="0.3" z="0.05">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+        </xacro:inertial_box>
+    </link>
+
+    <xacro:rotor suffix="0" x="0.15" y="0.15" ccw="-1" />  <!-- Front Left -->
+    <xacro:rotor suffix="1" x="-0.15" y="-0.15" ccw="-1" />  <!-- Rear Right -->
+    <xacro:rotor suffix="2" x="0.15" y="-0.15" ccw="1" /> <!-- Front Right -->
+    <xacro:rotor suffix="3" x="-0.15" y="0.15" ccw="1" /> <!-- Rear Left -->
+
+    <xacro:include filename="sensors.xacro" />
+
+    <gazebo>
+        <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher">
+            <topic>/${robot_namespace}/joint_states</topic>
+        </plugin>
+
+        <plugin
+            filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster">
+        </plugin>
+
+        <!-- odometry -->
+        <plugin
+            filename="gz-sim-odometry-publisher-system"
+            name="gz::sim::systems::OdometryPublisher">
+            <dimensions>3</dimensions>
+            <odom_publish_frequency>50</odom_publish_frequency>
+            <odom_topic>/${robot_namespace}/odometry</odom_topic>
+            <tf_topic>/${robot_namespace}/tf</tf_topic>
+            <gaussian_noise>0.01</gaussian_noise>
+            <odom_frame>${robot_namespace}/odom</odom_frame>
+            <robot_base_frame>${robot_namespace}/base_footprint</robot_base_frame>
+        </plugin>
+
+
+    </gazebo>
+
+</robot>    

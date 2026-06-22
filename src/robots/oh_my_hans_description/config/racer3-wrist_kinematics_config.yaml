@@ -1,0 +1,135 @@
+# Joints limits
+joint_limits:
+  joint_1:
+    has_acceleration_limits: false
+    has_effort_limits: true
+    has_position_limits: true
+    has_velocity_limits: true
+    max_effort: 1000.0
+    max_position: !degrees  169.939282
+    max_velocity: !degrees  120.0
+    min_position: !degrees -169.939282
+  joint_2:
+    has_acceleration_limits: false
+    has_effort_limits: true
+    has_position_limits: true
+    has_velocity_limits: true
+    max_effort: 1000.0
+    max_position: !degrees  63.9420899
+    max_velocity: !degrees  120.0
+    min_position: !degrees -114.018601
+  joint_3:
+    has_acceleration_limits: false
+    has_effort_limits: true
+    has_position_limits: true
+    has_velocity_limits: true
+    max_effort: 1000.0
+    max_position: !degrees  84.969641
+    max_velocity: !degrees  120.0
+    min_position: !degrees -150.114942
+  joint_4:
+    has_acceleration_limits: false
+    has_effort_limits: true
+    has_position_limits: true
+    has_velocity_limits: true
+    max_effort: 1000.0
+    max_position: !degrees  179.9 
+    max_velocity: !degrees  120.0
+    min_position: !degrees -179.9 
+  joint_5:
+    has_acceleration_limits: false
+    has_effort_limits: true
+    has_position_limits: true
+    has_velocity_limits: true
+    max_effort: 1000.0
+    max_position: !degrees  90
+    max_velocity: !degrees  120.0
+    min_position: !degrees -105
+  joint_6:
+    has_acceleration_limits: false
+    has_effort_limits: true
+    has_position_limits: true
+    has_velocity_limits: true
+    max_effort: 1000.0
+    max_position: !degrees  170
+    max_velocity: !degrees  120.0
+    min_position: !degrees -170
+
+# Kinematics / joint origin
+# 3.14159265359 
+# 1.57079632679
+kinematics:
+  joint_1:
+    x: 0
+    y: 0
+    z: 0.242
+    roll: 0
+    pitch: 0
+    yaw: 0
+  joint_2:
+    x: 0
+    y: 0.05
+    z: 0.123
+    roll: 0
+    pitch: 0
+    yaw: 0
+  joint_3:
+    x: 0
+    y: 0
+    z: 0.27
+    roll: 0
+    pitch: 0
+    yaw: 0
+  joint_4:
+    x: 0
+    y: 0.0678
+    z: 0.05
+    roll: -1.57079632679
+    pitch: 0
+    yaw: 0
+  joint_5:
+    x: 0
+    y: 0
+    z: 0.23814
+    roll: 0
+    pitch: 0
+    yaw: 0
+  joint_6:
+    x: 0
+    y: 0
+    z: 0.08
+    roll: 0
+    pitch: 0
+    yaw: 0
+  joint_tool0:
+    x: 0
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: 0
+axis:
+  axis_1:
+    x: 0   
+    y: 0 
+    z: 1 
+  axis_2:
+    x: -1  
+    y: 0
+    z: 0 
+  axis_3:
+    x: -1  
+    y: 0
+    z: 0
+  axis_4:
+    x: 0   
+    y: 0 
+    z: -1 
+  axis_5:
+    x: 1
+    y: 0
+    z: 0 
+  axis_6:
+    x: 0   
+    y: 0 
+    z: -1

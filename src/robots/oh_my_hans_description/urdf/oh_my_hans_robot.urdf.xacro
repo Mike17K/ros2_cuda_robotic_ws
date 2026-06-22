@@ -1,0 +1,158 @@
+<robot name="oh_my_hans_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="robot_namespace" value="oh_my_hans" />
+
+  <xacro:include filename="$(find oh_my_hans_description)/urdf/elfin10.urdf.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/urdf/racer3-wrist.urdf.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/urdf/gripper.urdf.xacro" />
+  <xacro:include filename="$(find orbbec_description)/urdf/femto_bolt.urdf.xacro" />
+
+  <xacro:arg name="kinematics_params"
+    default="$(find oh_my_hans_description)/config/racer3-wrist_kinematics_config.yaml" />
+  <xacro:arg name="use_fake_hardware" default="false" />
+
+  <!-- 1. Φόρτωση του Comau Βραχίονα -->
+  <xacro:racer3-wrist_robot prefix="racer_"
+    kinematics_params="$(arg kinematics_params)" />
+
+  <link name="cart_footprint_link"></link>
+
+  <!-- 2. Δημιουργία του Cart Link (Root) με σωστό όνομα και Inertial για το Gazebo -->
+  <link name="cart_base_link">
+    <inertial>
+      <mass value="10.0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="0.5" ixy="0.0" ixz="0.0" iyy="0.5" iyz="0.0" izz="0.5" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="$(find oh_my_hans_description)/meshes/cart.stl" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0" />
+      <material name="LightGrey">
+        <color rgba="0.847 0.847 0.871 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="$(find oh_my_hans_description)/meshes/cart.stl" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0" />
+    </collision>
+  </link>
+
+  <joint name="cart_fixed_joint" type="fixed">
+    <parent link="cart_footprint_link" />
+    <child link="cart_base_link" />
+    <origin xyz="0.0 0.0 0.27" rpy="0.0 0.0 3.14159265359" />
+  </joint>
+
+  <!-- 3. Σύνδεση του Lift πάνω στο Cart Root Link -->
+
+  <link name="liftkit_base_link">
+    <inertial>
+      <mass value="20.0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link1.stl" />
+      </geometry>
+      <material name="white" />
+
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link1.stl" />
+      </geometry>
+      <material name="white" />
+
+    </collision>
+  </link>
+
+  <joint name="liftkit_fixed_joint" type="fixed">
+    <parent link="cart_base_link" />
+    <child link="liftkit_base_link" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 3.14159265359" />
+  </joint>
+
+  <link name='liftkit_top_link'>
+    <mass value="20.0" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <inertia
+      ixx="0.001" ixy="0.0" ixz="0.0"
+      iyy="0.001" iyz="0.0"
+      izz="0.001" />
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link3.stl" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link3.stl" />
+      </geometry>
+      <material name="white" />
+
+    </collision>
+  </link>
+
+  <joint name="liftkit_joint" type="prismatic">
+    <parent link="liftkit_base_link" />
+    <child link="liftkit_top_link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.0012" upper="1.4" effort="1000.0" velocity="5.0" />
+    <origin xyz="0.0 0.0 0.990" rpy="0.0 0.0 0.0" />
+  </joint>
+
+
+  <!-- 4. Σύνδεση του Elfin Βραχίονα πάνω στο Lift -->
+  <joint name="lift_to_elfin_joint" type="fixed">
+    <parent link="liftkit_top_link" />
+    <child link="elfin_base_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <joint name="elfin_spacer_joint" type="fixed">
+    <parent link="elfin_end_link" />
+    <child link="robot_spacer" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <joint name="spacer_comau_joint" type="fixed">
+    <parent link="robot_spacer" />
+    <child link="racer_base_link" />
+    <origin xyz="0 0 0.123" rpy="0 0 -2.74889357" />
+  </joint>
+
+  <!-- 5. Φόρτωση του Gripper στην άκρη του Comau -->
+  <xacro:gripper prefix_gripper="" connected_to="racer_tool0" />
+
+  <!-- 6. Φόρτωση της Κάμερας -->
+  <xacro:femto_bolt prefix="camera" parent="racer_tool0"
+    use_nominal_extrinsics="true">
+    <origin xyz="-0.003071250138066143 -0.09161166438921776 0.07951109306092498"
+      rpy="0.5759586532  -1.5358897418 0.9783311093273087" />
+  </xacro:femto_bolt>
+
+  <!-- 7. Ενδιάμεσος Spacer ανάμεσα σε Elfin και Comau -->
+  <link name="robot_spacer">
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+    </inertial>
+  </link>
+
+  <!-- 8. ROS2 Control Controllers -->
+  <xacro:include filename="$(find oh_my_hans_description)/urdf/arm_topic.ros2_control.xacro" />
+  <xacro:arm_topic_ros2_control use_fake_hardware="$(arg use_fake_hardware)" sim_gazebo="false"
+    sim_ignition="false" />
+
+</robot>

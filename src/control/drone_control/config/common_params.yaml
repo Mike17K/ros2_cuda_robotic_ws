@@ -1,0 +1,23 @@
+# Common controller parameters
+# Topics and general settings
+imu_topic: /drone/imu
+odom_topic: /drone/odometry
+joy_topic: /joy
+motor_topic: /drone/command/motor_speed
+
+# Loop and motor settings
+publish_rate_hz: 50.0
+motor_count: 4
+min_motor_speed: 0.0
+max_motor_speed: 1000.0
+hover_motor_speed: 505.0
+throttle_trim_range: 80.0
+throttle_deadzone: 0.08
+joy_timeout_sec: 0.5
+deadman_button: 4
+axis_roll: 0
+axis_pitch: 1
+axis_yaw: 2
+axis_throttle: 3
+mode_toggle_button: 6
+mode_reset_button: 7

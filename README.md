@@ -35,3 +35,5 @@ add this in .bashrc
 ```
 export UV_SKIP_WHEEL_FILENAME_CHECK=1
 ```
+
+sudo apt install ros-jazzy-orbbec-description

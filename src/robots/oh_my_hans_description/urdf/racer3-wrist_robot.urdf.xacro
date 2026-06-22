@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="racer3-wrist">
+
+  <!-- 
+    Author: LMS
+   -->
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="kinematics_params"
+    default="$(find oh_my_hans_description)/config/racer3-wrist_kinematics_config.yaml" />
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+  <xacro:arg name="safety_limits" default="false" />
+  <xacro:arg name="safety_pos_margin" default="0.15" />
+  <xacro:arg name="safety_k_position" default="20" />
+
+  <xacro:arg name="pos_x" default="0" />
+  <xacro:arg name="pos_y" default="0" />
+  <xacro:arg name="pos_z" default="0" />
+  <xacro:arg name="roll" default="0" />
+  <xacro:arg name="pitch" default="0" />
+  <xacro:arg name="yaw" default="0" />
+
+  <!--load
+  racer3-wrist -->
+  <xacro:include filename="$(find oh_my_hans_description)/urdf/racer3-wrist.urdf.xacro" />
+
+  <!-- racer3-wrist robot -->
+  <xacro:racer3-wrist_robot prefix="$(arg prefix)"
+    kinematics_params="$(arg kinematics_params)"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+    safety_limits="$(arg safety_limits)"
+    safety_pos_margin="$(arg safety_pos_margin)"
+    safety_k_position="$(arg safety_k_position)"
+  />
+
+</robot>

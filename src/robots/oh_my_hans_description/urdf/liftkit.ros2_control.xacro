@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="liftkit_ros2_control"
+                 params="use_fake_hardware:=true 
+                        use_sim_time:=false   
+                        sim_gazebo:=false    
+                        sim_ignition:=false">
+        <ros2_control name="liftkit_hardware"
+                      type="system">
+
+            <hardware>
+                <plugin>ewellix_driver/EwellixHardwareInterface</plugin>
+                <param name="use_fake_hardware">${use_fake_hardware}</param>
+                <param name="use_sim_time">${use_sim_time}</param>
+            </hardware>
+            
+            <joint name="liftkit_joint">
+                <command_interface name="position">
+                    <param name="min">{0.0}</param>
+                    <param name="max">{1.4}</param>
+                </command_interface>
+                <command_interface name="velocity">
+                    <param name="min">-0.08</param>
+                    <param name="max">0.08</param>
+                </command_interface>
+                <state_interface name="position" />
+                <state_interface name="velocity" />
+            </joint>
+        </ros2_control>
+    </xacro:macro>
+</robot>

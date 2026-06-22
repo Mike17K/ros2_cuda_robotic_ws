@@ -1,0 +1,12 @@
+# Inner-rate PID controller parameters
+# Roll / pitch (share)
+rate_Kp: 1.0
+rate_Ki: 0.1
+rate_Kd: 0.4
+rate_integral_limit: 10.0
+rate_integral_leak_rate: 0.0
+
+# Yaw
+rate_Kp_yaw: 1.0
+rate_Ki_yaw: 0.00
+rate_Kd_yaw: 0.0

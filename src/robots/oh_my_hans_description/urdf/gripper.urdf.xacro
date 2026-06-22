@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- <xacro:include filename="$(find azure_kinect_ros_driver)/urdf/azure_kinect.urdf.xacro" /> -->
+
+  <xacro:macro name="gripper" params="prefix_gripper connected_to">
+
+    <xacro:property name="M_PI" value="3.14159265" />
+
+    <joint name="ft_sensor_joint" type="fixed">
+      <origin xyz="0 0.0 0.0583" rpy="0.0 0.0 ${M_PI}" />
+      <parent link="${connected_to}" />
+      <child link="ft_sensor_link" />
+    </joint>
+    <link name="ft_sensor_link" />
+
+
+    <joint name="camera_mount_joint" type="fixed">
+      <origin xyz="0 0.0 0.0" rpy="0.0 0.0 -${M_PI}" />
+      <parent link="ft_sensor_link" />
+      <child link="camera_mount_link" />
+    </joint>
+    <link name="camera_mount_link">
+      <visual>
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/orbbec_camera_mount.stl"
+            scale="1 1 1" />
+        </geometry>
+        <material name="Black">
+          <color rgba="0.15 0.15 0.15 1.0" />
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/orbbec_camera_mount.stl"
+            scale="1 1 1" />
+        </geometry>
+      </collision>
+    </link>
+
+
+    <joint name="gripper_joint" type="fixed">
+      <origin xyz="0 0 0.018" rpy="0 0 0.0" />
+      <parent link="camera_mount_link" />
+      <child link="gripper" />
+    </joint>
+    <link name="gripper">
+      <!-- <visual>
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/ndt_probe.stl" scale="1 1 1.3" />
+        </geometry>
+        <material name="Black">
+          <color rgba="0.10 0.10 0.10 1" />
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="$(find oh_my_hans_description)/meshes/ndt_probe.stl" scale="1 1 1.3 " />
+        </geometry>
+      </collision> -->
+    </link>
+
+
+    <joint name="gripper_grasp_plane_joint" type="fixed">
+      <!-- <origin xyz="-0.01 0.005 0.133" rpy="0 0 0.0" /> -->
+      <origin xyz="0.022689459000000044 0.0013030990000000636 0.2164333189999999" rpy="0 0 0.0" />
+
+      <parent link="gripper" />
+      <child link="gripper_grasp_plane_link" />
+    </joint>
+    <link name="gripper_grasp_plane_link">
+      <origin xyz="0 0 0 " rpy="0 0 0" />
+    </link>
+
+
+    <joint name="fod_grasp_plane_joint" type="fixed">
+      <origin xyz="0 0 0.13" rpy="0 0 0.0" />
+      <parent link="gripper" />
+      <child link="fod_grasp_plane_link" />
+    </joint>
+    <link name="fod_grasp_plane_link">
+      <origin xyz="0 0 0 " rpy="0 0 0" />
+    </link>
+
+  </xacro:macro>
+
+</robot>

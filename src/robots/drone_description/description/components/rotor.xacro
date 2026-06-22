@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="shapes.xacro" />
+
+    <!-- Added 'ccw' parameter: use 1 for counter-clockwise, -1 for clockwise -->
+    <xacro:macro name="rotor" params="suffix x y ccw">
+
+        <!-- Continuous Joint for spinning -->
+        <joint name="rotor_${suffix}_joint" type="continuous">
+            <parent link="base_link" />
+            <child link="rotor_${suffix}" />
+            <origin xyz="${x} ${y} 0.03" rpy="0 0 0" />
+            <axis xyz="0 0 1" />
+        </joint>
+
+        <!-- Rotor Link Geometry -->
+        <link name="rotor_${suffix}">
+            <visual>
+                <geometry>
+                    <cylinder radius="0.1" length="0.01" />
+                </geometry>
+            </visual>
+            <xacro:inertial_cylinder mass="0.02" length="0.01" radius="0.1">
+                <origin xyz="0 0 0" rpy="0 0 0" />
+            </xacro:inertial_cylinder>
+        </link>
+
+        <gazebo>
+            <plugin filename="gz-sim-multicopter-motor-model-system"
+                name="gz::sim::systems::MulticopterMotorModel">
+
+                <jointName>rotor_${suffix}_joint</jointName>
+                <linkName>rotor_${suffix}</linkName>
+
+                <turningDirection>${'ccw' if ccw==1 else 'cw'}</turningDirection>
+
+                <timeConstantUp>0.0125</timeConstantUp>
+                <timeConstantDown>0.025</timeConstantDown>
+
+                <maxRotVelocity>1000</maxRotVelocity>
+
+                <motorConstant>1.269e-05</motorConstant>
+                <momentConstant>0.016</momentConstant>
+
+                <commandSubTopic>command/motor_speed</commandSubTopic>
+
+                <motorNumber>${suffix}</motorNumber>
+                <actuator_number>${suffix}</actuator_number>
+
+                <motorSpeedPubTopic>motor_speed/${suffix}</motorSpeedPubTopic>
+
+                <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+                <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+
+                <!-- set to 1 for direct rotor velocity simulation (less artificial slowdown) -->
+                <rotorVelocitySlowdownSim>1</rotorVelocitySlowdownSim>
+
+                <motorType>velocity</motorType>
+            </plugin>
+        </gazebo>
+
+    </xacro:macro>
+</robot>
