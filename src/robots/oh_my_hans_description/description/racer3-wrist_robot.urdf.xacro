@@ -21,7 +21,7 @@
 
   <!--load
   racer3-wrist -->
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/racer3-wrist.urdf.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/racer3-wrist.urdf.xacro" />
 
   <!-- racer3-wrist robot -->
   <xacro:racer3-wrist_robot prefix="$(arg prefix)"

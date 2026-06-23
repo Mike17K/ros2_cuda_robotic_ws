@@ -24,7 +24,7 @@
     <link name="camera_mount_link">
       <visual>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/orbbec_camera_mount.stl"
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/orbbec_camera_mount.stl"
             scale="1 1 1" />
         </geometry>
         <material name="Black">
@@ -33,7 +33,7 @@
       </visual>
       <collision>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/orbbec_camera_mount.stl"
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/orbbec_camera_mount.stl"
             scale="1 1 1" />
         </geometry>
       </collision>
@@ -48,7 +48,7 @@
     <link name="gripper">
       <!-- <visual>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/ndt_probe.stl" scale="1 1 1.3" />
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/ndt_probe.stl" scale="1 1 1.3" />
         </geometry>
         <material name="Black">
           <color rgba="0.10 0.10 0.10 1" />
@@ -56,7 +56,7 @@
       </visual>
       <collision>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/ndt_probe.stl" scale="1 1 1.3 " />
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/ndt_probe.stl" scale="1 1 1.3 " />
         </geometry>
       </collision> -->
     </link>

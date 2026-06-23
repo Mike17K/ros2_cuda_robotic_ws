@@ -17,7 +17,7 @@ def generate_launch_description():
     def launch_setup(context, *args, **kwargs):
         pkg_description = get_package_share_directory('oh_my_hans_description')
         robot_namespace = LaunchConfiguration('namespace').perform(context)
-        xacro_file = os.path.join(pkg_description, 'urdf', 'oh_my_hans_robot.urdf.xacro')
+        xacro_file = os.path.join(pkg_description, 'description', 'oh_my_hans_robot.urdf.xacro')
         robot_description_config = cast(
             Any,
             xacro.process_file(

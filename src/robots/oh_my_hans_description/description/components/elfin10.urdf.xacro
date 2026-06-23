@@ -1,11 +1,11 @@
 <robot
   name="elfin10" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/materials.xacro" />
 
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/elfin_robot.gazebo" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/elfin.gazebo.xacro" />
 
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/elfin_transmission.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/elfin_transmission.xacro" />
 
   <xacro:property name="PI" value="3.1415926535897931" />
 
@@ -45,7 +45,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_base_link.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_base_link.stl" />
       </geometry>
       <material
         name="">
@@ -59,7 +59,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_base_link.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_base_link.stl" />
       </geometry>
     </collision>
   </link>
@@ -85,7 +85,7 @@
         rpy="0 0 ${PI}" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link1.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link1.stl" />
       </geometry>
       <material
         name="">
@@ -99,7 +99,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link1.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link1.stl" />
       </geometry>
     </collision>
   </link>
@@ -143,7 +143,7 @@
         rpy="${PI/2} 0 ${PI}" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link2.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link2.stl" />
       </geometry>
       <material
         name="">
@@ -157,7 +157,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link2.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link2.stl" />
       </geometry>
     </collision>
   </link>
@@ -201,7 +201,7 @@
         rpy="0 -${PI/2} -${PI/2}" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link3.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link3.stl" />
       </geometry>
       <material
         name="">
@@ -215,7 +215,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link3.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link3.stl" />
       </geometry>
     </collision>
   </link>
@@ -259,7 +259,7 @@
         rpy="${PI} ${PI} ${PI}" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link4.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link4.stl" />
       </geometry>
       <material
         name="">
@@ -273,7 +273,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link4.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link4.stl" />
       </geometry>
     </collision>
   </link>
@@ -317,7 +317,7 @@
         rpy="-${PI/2} 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link5.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link5.stl" />
       </geometry>
       <material
         name="">
@@ -331,7 +331,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link5.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link5.stl" />
       </geometry>
     </collision>
   </link>
@@ -375,7 +375,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link6.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link6.stl" />
       </geometry>
       <material
         name="">
@@ -389,7 +389,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find oh_my_hans_description)/meshes/elfin_link6.STL" />
+          filename="$(find oh_my_hans_description)/meshes/elfin/elfin_link6.stl" />
       </geometry>
     </collision>
   </link>

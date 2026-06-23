@@ -1,9 +1,9 @@
 <robot name="oh_my_hans_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:property name="robot_namespace" value="oh_my_hans" />
 
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/elfin10.urdf.xacro" />
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/racer3-wrist.urdf.xacro" />
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/gripper.urdf.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/elfin10.urdf.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/racer3-wrist.urdf.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/gripper.urdf.xacro" />
   <xacro:include filename="$(find orbbec_description)/urdf/femto_bolt.urdf.xacro" />
 
   <xacro:arg name="kinematics_params"
@@ -25,7 +25,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find oh_my_hans_description)/meshes/cart.stl" scale="1 1 1" />
+        <mesh filename="$(find oh_my_hans_description)/meshes/cart/cart.stl" scale="1 1 1" />
       </geometry>
       <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0" />
       <material name="LightGrey">
@@ -34,7 +34,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find oh_my_hans_description)/meshes/cart.stl" scale="1 1 1" />
+        <mesh filename="$(find oh_my_hans_description)/meshes/cart/cart.stl" scale="1 1 1" />
       </geometry>
       <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0" />
     </collision>
@@ -57,7 +57,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link1.stl" />
+        <mesh filename="$(find oh_my_hans_description)/meshes/liftkit/LIFTKIT_OS_Link1.stl" />
       </geometry>
       <material name="white" />
 
@@ -65,7 +65,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link1.stl" />
+        <mesh filename="$(find oh_my_hans_description)/meshes/liftkit/LIFTKIT_OS_Link1.stl" />
       </geometry>
       <material name="white" />
 
@@ -89,14 +89,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link3.stl" />
+        <mesh filename="$(find oh_my_hans_description)/meshes/liftkit/LIFTKIT_OS_Link3.stl" />
       </geometry>
       <material name="white" />
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="$(find oh_my_hans_description)/meshes/LIFTKIT_OS_Link3.stl" />
+        <mesh filename="$(find oh_my_hans_description)/meshes/liftkit/LIFTKIT_OS_Link3.stl" />
       </geometry>
       <material name="white" />
 
@@ -151,7 +151,7 @@
   </link>
 
   <!-- 8. ROS2 Control Controllers -->
-  <xacro:include filename="$(find oh_my_hans_description)/urdf/arm_topic.ros2_control.xacro" />
+  <xacro:include filename="$(find oh_my_hans_description)/description/components/arm_topic.ros2_control.xacro" />
   <xacro:arm_topic_ros2_control use_fake_hardware="$(arg use_fake_hardware)" sim_gazebo="false"
     sim_ignition="false" />
 

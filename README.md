@@ -31,6 +31,13 @@ sudo apt install ros-jazzy-actuator-msgs
 sudo apt update
 sudo apt install ros-jazzy-ros-gz-sim
 sudo apt install ros-jazzy-ros-gz-bridge
+sudo apt-get install libcanberra-gtk-module libcanberra-gtk3-module
+```
+
+```bash
+gz fuel download -u "https://fuel.gazebosim.org/1.0/OpenRobotics/models/office desk"
+gz fuel download -u "https://fuel.gazebosim.org/1.0/OpenRobotics/models/bed"
+gz fuel download -u "https://fuel.gazebosim.org/1.0/OpenRobotics/models/office chair"
 ```
 
 # Build

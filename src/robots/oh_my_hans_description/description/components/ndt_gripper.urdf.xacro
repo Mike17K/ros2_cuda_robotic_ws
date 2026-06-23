@@ -30,7 +30,7 @@
     <link name="camera_mount_link">
       <visual>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/camera_mount.stl" scale="1 1 1" />
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/camera_mount.stl" scale="1 1 1" />
         </geometry>
         <material name="LightGrey">
           <color rgba="0.9 0.9 0.9 1.0" />
@@ -38,7 +38,7 @@
       </visual>
       <collision>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/camera_mount.stl" scale="1 1 1" />
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/camera_mount.stl" scale="1 1 1" />
         </geometry>
       </collision>
     </link>
@@ -46,7 +46,7 @@
     <link name="gripper">
       <visual>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/gripper_ndt.stl" scale="1 1 1" />
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/gripper_ndt.stl" scale="1 1 1" />
         </geometry>
         <material name="LightGrey">
           <color rgba="0.9 0.9 0.9 1.0" />
@@ -54,7 +54,7 @@
       </visual>
       <collision>
         <geometry>
-          <mesh filename="$(find oh_my_hans_description)/meshes/gripper_ndt.stl" scale="1 1 1 " />
+          <mesh filename="$(find oh_my_hans_description)/meshes/gripper/gripper_ndt.stl" scale="1 1 1 " />
         </geometry>
       </collision>
     </link>
