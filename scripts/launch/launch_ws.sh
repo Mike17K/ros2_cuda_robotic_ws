@@ -2,7 +2,7 @@
 
 ROS_DOMAIN_ID=55
 ROS_DISTRO="jazzy"
-WS="/home/kaipis/Desktop/projects/robotics/diffusion_robot_test_ws"
+WS=${PWD}
 DEFAULT_DELAY=0.05
 DEFAULT_LONG_DELAY=0.2
 # Η εντολή που προετοιμάζει κάθε νέο terminal panel

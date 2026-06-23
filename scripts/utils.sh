@@ -13,7 +13,7 @@ done
 shopt -s expand_aliases
 
 # Αρχικό Setup Περιβάλλοντος
-source /opt/ros/humble/setup.bash
+source /opt/ros/jazzy/setup.bash
 [ -f ".venv/bin/activate" ] && source .venv/bin/activate
 [ -f "install/setup.bash" ] && source install/setup.bash
 

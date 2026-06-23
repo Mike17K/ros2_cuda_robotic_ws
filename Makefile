@@ -33,14 +33,13 @@ sync:
 
 rosdeps:
 	@echo -e "$(C)Installing rosdeps...$(RESET)"
-	rosdep update && rosdep install -i -r --from-paths src/isaac_ros_nvblox/ --rosdistro jazzy -y
+	rosdep update && rosdep install -i -r --from-paths src/ --rosdistro jazzy -y
 
 build:
 	$(RUN) colcon build \
 	--symlink-install \
 	--parallel-workers 2 \
 	--base-paths src \
-	--packages-skip im4age_to_depth_generation \
 	--cmake-args $(CMAKE_DEFAULT_FLAGS) -DCMAKE_BUILD_TYPE=Release
 
 # 2. Build Single Package (make builds n=όνομα)
