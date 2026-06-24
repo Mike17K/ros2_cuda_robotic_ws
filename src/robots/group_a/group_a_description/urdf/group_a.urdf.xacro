@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<robot name="group_a" xmlns:xacro="http://wiki.ros.org/xacro">
+  <!--
+    Group A: Ewellix lift (base) + UR arm (mounted on lift_mount) + Orbbec camera (at UR tool0).
+
+    tf_prefix convention:
+      lift_prefix (default "lift_") → ewellix joints/links: lift_lower_joint, lift_upper_link …
+      ur_prefix   (default "ur_")   → UR joints/links:      ur_shoulder_pan_joint …
+
+    Hardware mode (mutually exclusive):
+      sim_gazebo=true           → gz_ros2_control/GazeboSimSystem  (Gazebo simulation)
+      use_fake_hardware=true    → mock_components/GenericSystem     (offline / CI testing)
+      both false                → ewellix real driver + placeholder for UR real driver
+
+    The ewellix_macro generates its own <ros2_control> block and selects the hardware
+    plugin based on sim_gazebo / use_fake_hardware.  The UR ros2_control block is defined
+    here (ur_macro.xacro does not generate one).  A single GazeboSimROS2ControlPlugin
+    manages both hardware interfaces when sim_gazebo=true.
+  -->
+
+  <!-- === Includes === -->
+  <xacro:include filename="$(find ewellix_description)/urdf/ewellix_macro.xacro"/>
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+  <xacro:include filename="$(find ur_description)/urdf/inc/ur_joint_control.xacro"/>
+
+  <!-- === Arguments === -->
+  <xacro:arg name="namespace"          default="group_a"/>
+  <xacro:arg name="lift_type"          default="tlt_x25"/>
+  <xacro:arg name="lift_prefix"        default="lift_"/>
+  <xacro:arg name="ur_type"            default="ur10"/>
+  <xacro:arg name="ur_prefix"          default="ur_"/>
+  <xacro:arg name="sim_gazebo"         default="true"/>
+  <xacro:arg name="use_fake_hardware"  default="false"/>
+
+  <!-- Path to the combined controllers yaml — overridable at launch time -->
+  <xacro:arg name="simulation_controllers"
+             default="$(find group_a_control)/config/group_a_controllers.yaml"/>
+
+  <!-- === World === -->
+  <link name="world"/>
+
+  <!-- === Ewellix Lift === -->
+  <!--
+    The macro generates:
+      • kinematic structure (lower_link, upper_link, plate_link, mount)
+      • <ros2_control name="lift_hardware"> — plugin selected by sim_gazebo/use_fake_hardware
+    It does NOT add the Gazebo plugin — that is our responsibility below.
+  -->
+  <xacro:ewellix_lift
+    parent="world"
+    tf_prefix="$(arg lift_prefix)"
+    add_plate="true"
+    add_mount="true"
+    parameters_file="$(find ewellix_description)/config/$(arg lift_type).yaml"
+    generate_ros2_control_tag="true"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    sim_gazebo="$(arg sim_gazebo)"
+    >
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:ewellix_lift>
+
+  <!-- === UR Arm (mounted on ewellix top) === -->
+  <!--
+    Attachment point: {lift_prefix}mount  (= "lift_mount").
+    The ewellix macro always creates this link — either above mount_link (when
+    add_mount=true and the model config has a mount section) or directly above
+    upper_link.  It is the canonical top-of-lift interface link.
+  -->
+  <xacro:ur_robot
+    name="$(arg ur_type)"
+    tf_prefix="$(arg ur_prefix)"
+    parent="$(arg lift_prefix)mount"
+    joint_limits_parameters_file="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"
+    kinematics_parameters_file="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"
+    physical_parameters_file="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"
+    visual_parameters_file="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"
+    >
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:ur_robot>
+
+  <!-- UR ros2_control block — ur_macro.xacro does not generate one -->
+  <ros2_control name="$(arg ur_type)" type="system">
+    <hardware>
+      <xacro:if value="$(arg sim_gazebo)">
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </xacro:if>
+      <xacro:unless value="$(arg sim_gazebo)">
+        <plugin>mock_components/GenericSystem</plugin>
+      </xacro:unless>
+    </hardware>
+    <xacro:ur_joint_control_description tf_prefix="$(arg ur_prefix)"/>
+  </ros2_control>
+
+  <!-- === Orbbec Camera at UR end-effector === -->
+  <link name="camera_link">
+    <visual>
+      <!-- Placeholder box approximating Orbbec Gemini 2 dimensions -->
+      <geometry><box size="0.040 0.095 0.030"/></geometry>
+      <material name="dark_grey"><color rgba="0.15 0.15 0.15 1.0"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.040 0.095 0.030"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.120"/>
+      <inertia ixx="0.000060" ixy="0.0" ixz="0.0"
+               iyy="0.000060" iyz="0.0" izz="0.000060"/>
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="$(arg ur_prefix)tool0"/>
+    <child link="camera_link"/>
+    <!-- Camera sits 20 mm forward of the flange, looking along tool Z -->
+    <origin xyz="0 0 0.020" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Optical frame: Z forward, X right, Y down (REP-103 camera convention) -->
+  <link name="camera_optical_frame"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+  </joint>
+
+  <!-- === Gazebo-only blocks (simulation_controllers + sensors) === -->
+  <xacro:if value="$(arg sim_gazebo)">
+    <!--
+      Single gz_ros2_control instance manages BOTH ros2_control blocks
+      (lift_hardware from ewellix_macro + ur_type from above).
+      The <ros><namespace> tag is mandatory: without it the plugin creates the
+      controller manager at the root namespace and subscribes to the absolute
+      /robot_description topic, which never matches the namespaced RSP output.
+      With it, the CM is at /{namespace}/controller_manager and subscribes to
+      /{namespace}/robot_description, which matches the RSP in the same namespace.
+    -->
+    <gazebo>
+      <plugin filename="gz_ros2_control-system"
+              name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <ros>
+          <namespace>$(arg namespace)</namespace>
+        </ros>
+        <parameters>$(arg simulation_controllers)</parameters>
+      </plugin>
+    </gazebo>
+
+    <gazebo>
+      <plugin filename="libgz-sim-pose-publisher-system.so"
+              name="gz::sim::systems::PosePublisher">
+        <publish_link_pose>true</publish_link_pose>
+        <publish_nested_model_pose>true</publish_nested_model_pose>
+        <use_pose_vector_msg>true</use_pose_vector_msg>
+        <update_frequency>50</update_frequency>
+      </plugin>
+    </gazebo>
+
+    <!-- Orbbec RGBD sensor (Orbbec Gemini 2 approximate parameters) -->
+    <gazebo reference="camera_link">
+      <sensor name="orbbec_camera" type="rgbd_camera">
+        <camera>
+          <horizontal_fov>1.2120256</horizontal_fov>  <!-- 69.4° -->
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.10</near>
+            <far>10.0</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>false</visualize>
+        <topic>/group_a/camera/rgbd</topic>
+      </sensor>
+    </gazebo>
+  </xacro:if>
+
+</robot>

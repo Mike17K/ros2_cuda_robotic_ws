@@ -75,5 +75,6 @@
   },
   "terminal.integrated.env.linux": {
     "GTK_PATH": null
-  }
+  },
+  "black-formatter.args": ["--line-length=200"]
 }
