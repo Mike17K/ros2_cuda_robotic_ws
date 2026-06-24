@@ -7,6 +7,3 @@
 [submodule "src/robots/ewellix_lift"]
 	path = src/robots/ewellix_lift
 	url = https://github.com/clearpathrobotics/ewellix_lift_common.git
-[submodule "src/planning/isaac_ros_common"]
-	path = src/planning/isaac_ros_common
-	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git
