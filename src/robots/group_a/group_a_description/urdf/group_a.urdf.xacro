@@ -25,7 +25,7 @@
 
   <!-- === Arguments === -->
   <xacro:arg name="namespace"          default="group_a"/>
-  <xacro:arg name="lift_type"          default="tlt_x25"/>
+  <xacro:arg name="lift_type"          default="ur_620"/>
   <xacro:arg name="lift_prefix"        default="lift_"/>
   <xacro:arg name="ur_type"            default="ur10"/>
   <xacro:arg name="ur_prefix"          default="ur_"/>

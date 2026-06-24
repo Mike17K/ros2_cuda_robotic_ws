@@ -26,11 +26,7 @@ def generate_launch_description():
     # -------------------------------------------------------------------------
     # 2. Ρύθμιση Περιβάλλοντος Gazebo (Resource Paths)
     # -------------------------------------------------------------------------
-    gz_resource_paths = (
-        os.path.dirname(ur_desc_share)
-        + ":" + os.path.dirname(ewellix_desc_share)
-        + ":" + os.path.dirname(simulation_pkg)
-    )
+    gz_resource_paths = os.path.dirname(ur_desc_share) + ":" + os.path.dirname(ewellix_desc_share) + ":" + os.path.dirname(simulation_pkg)
     set_gz_resource_path = AppendEnvironmentVariable("GZ_SIM_RESOURCE_PATH", gz_resource_paths)
 
     # -------------------------------------------------------------------------
@@ -40,18 +36,6 @@ def generate_launch_description():
         "world",
         default_value=PathJoinSubstitution([simulation_pkg, "worlds", "drone_world.sdf"]),
         description="Gazebo world file to load",
-    )
-
-    spawn_ur10_arg = DeclareLaunchArgument(
-        "spawn_ur10",
-        default_value="false",
-        description="Spawn standalone UR10 (visualization only, no ros2_control)",
-    )
-
-    spawn_ewellix_arg = DeclareLaunchArgument(
-        "spawn_ewellix",
-        default_value="false",
-        description="Spawn standalone Ewellix lift with ros2_control",
     )
 
     spawn_group_a_arg = DeclareLaunchArgument(
@@ -72,35 +56,20 @@ def generate_launch_description():
     # 5. Robot spawners
     # -------------------------------------------------------------------------
 
-    # Standalone UR10 — visualization only (ur_description has no ros2_control)
-    spawn_ur10 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(simulation_pkg, "launch", "spawn_ur.launch.py")),
-        launch_arguments={"namespace": "ur10", "ur_type": "ur10"}.items(),
-        condition=IfCondition(LaunchConfiguration("spawn_ur10")),
-    )
-
-    # Standalone Ewellix with ros2_control
-    spawn_ewellix = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(simulation_pkg, "launch", "spawn_ewellix.launch.py")),
-        launch_arguments={"namespace": "ewellix", "type": "tlt_x25"}.items(),
-        condition=IfCondition(LaunchConfiguration("spawn_ewellix")),
-    )
-
     # Group A: combined Ewellix + UR + Orbbec with full ros2_control
     spawn_group_a = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(group_a_bringup_share, "launch", "spawn_gz.launch.py")
-        ),
+        PythonLaunchDescriptionSource(os.path.join(group_a_bringup_share, "launch", "spawn_gz.launch.py")),
         condition=IfCondition(LaunchConfiguration("spawn_group_a")),
     )
 
     # -------------------------------------------------------------------------
-    # 6. Global ROS2↔Gazebo bridge (clock, drone topics)
+    # 6. Global ROS2↔Gazebo bridge (clock)
     # -------------------------------------------------------------------------
     bridge_params = os.path.join(simulation_pkg, "config", "gz_bridge.yaml")
     ros_gz_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
+        name="clock_bridge",
         output="screen",
         parameters=[{"use_sim_time": True}],
         arguments=["--ros-args", "-p", f"config_file:={bridge_params}"],
@@ -113,12 +82,8 @@ def generate_launch_description():
         [
             set_gz_resource_path,
             world_arg,
-            spawn_ur10_arg,
-            spawn_ewellix_arg,
             spawn_group_a_arg,
             gazebo,
-            spawn_ur10,
-            spawn_ewellix,
             spawn_group_a,
             ros_gz_bridge,
         ]

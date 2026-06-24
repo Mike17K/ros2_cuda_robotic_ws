@@ -19,15 +19,9 @@ def generate_launch_description():
       • Controller spawners    (joint_state_broadcaster, lift JTC, ur JTC)
       • ros_gz_bridge          (camera topics + pose)
     """
-    ns_arg = DeclareLaunchArgument(
-        "namespace", default_value="group_a", description="Robot namespace"
-    )
-    lift_type_arg = DeclareLaunchArgument(
-        "lift_type", default_value="tlt_x25", description="Ewellix model type"
-    )
-    ur_type_arg = DeclareLaunchArgument(
-        "ur_type", default_value="ur10", description="UR robot type"
-    )
+    ns_arg = DeclareLaunchArgument("namespace", default_value="group_a", description="Robot namespace")
+    lift_type_arg = DeclareLaunchArgument("lift_type", default_value="ur_620", description="Ewellix model type")
+    ur_type_arg = DeclareLaunchArgument("ur_type", default_value="ur10", description="UR robot type")
 
     x_pose = LaunchConfiguration("x", default="0.0")
     y_pose = LaunchConfiguration("y", default="0.0")
@@ -82,12 +76,18 @@ def generate_launch_description():
             executable="create",
             output="screen",
             arguments=[
-                "-string", robot_description_config.toxml(),
-                "-name", robot_namespace,
-                "-allow_renaming", "true",
-                "-x", x_pose,
-                "-y", y_pose,
-                "-z", z_pose,
+                "-string",
+                robot_description_config.toxml(),
+                "-name",
+                robot_namespace,
+                "-allow_renaming",
+                "true",
+                "-x",
+                x_pose,
+                "-y",
+                y_pose,
+                "-z",
+                z_pose,
             ],
         )
 
@@ -103,7 +103,8 @@ def generate_launch_description():
                 "joint_state_broadcaster",
                 "lift_joint_trajectory_controller",
                 "ur_joint_trajectory_controller",
-                "--controller-manager", controller_manager,
+                "--controller-manager",
+                controller_manager,
             ],
         )
 
@@ -112,6 +113,7 @@ def generate_launch_description():
         ros_gz_bridge = Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
+            name="group_a_bridge",
             output="screen",
             parameters=[{"use_sim_time": True}],
             arguments=["--ros-args", "-p", f"config_file:={bridge_params}"],

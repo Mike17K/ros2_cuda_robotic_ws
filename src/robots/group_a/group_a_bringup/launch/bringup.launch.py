@@ -27,12 +27,8 @@ def generate_launch_description():
         default_value="true",
         description="Use mock_components/GenericSystem (true) or real hardware drivers (false)",
     )
-    lift_type_arg = DeclareLaunchArgument(
-        "lift_type", default_value="tlt_x25", description="Ewellix model type"
-    )
-    ur_type_arg = DeclareLaunchArgument(
-        "ur_type", default_value="ur10", description="UR robot type"
-    )
+    lift_type_arg = DeclareLaunchArgument("lift_type", default_value="ur_620", description="Ewellix model type")
+    ur_type_arg = DeclareLaunchArgument("ur_type", default_value="ur10", description="UR robot type")
 
     def launch_setup(context):
         pkg_description = get_package_share_directory("group_a_description")
@@ -90,7 +86,8 @@ def generate_launch_description():
                 "joint_state_broadcaster",
                 "lift_joint_trajectory_controller",
                 "ur_joint_trajectory_controller",
-                "--controller-manager", controller_manager,
+                "--controller-manager",
+                controller_manager,
             ],
         )
 

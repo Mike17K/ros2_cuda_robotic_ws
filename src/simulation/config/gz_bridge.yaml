@@ -4,64 +4,9 @@
   ros_type_name: "rosgraph_msgs/msg/Clock"
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS
-# RGBD pointcloud
-- ros_topic_name: "/drone/camera/rgbd/points"
-  gz_topic_name: "/drone/camera/rgbd/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
-  direction: GZ_TO_ROS
-# RGBD image raw (Το Gazebo παράγει το /image και το ROS 2 το λαμβάνει ως /image_raw)
-- ros_topic_name: "/drone/camera/rgbd/image_raw"
-  gz_topic_name: "/drone/camera/rgbd/image"
-  ros_type_name: "sensor_msgs/msg/Image"
-  gz_type_name: "gz.msgs.Image"
-  direction: GZ_TO_ROS
 
-# Depth image (Το Gazebo παράγει το /depth_image)
-- ros_topic_name: "/drone/camera/rgbd/depth_image"
-  gz_topic_name: "/drone/camera/rgbd/depth_image"
-  ros_type_name: "sensor_msgs/msg/Image"
-  gz_type_name: "gz.msgs.Image"
-  direction: GZ_TO_ROS
-# RGBD camera info
-- ros_topic_name: "/drone/camera/rgbd/camera_info"
-  gz_topic_name: "/drone/camera/rgbd/camera_info"
-  ros_type_name: "sensor_msgs/msg/CameraInfo"
-  gz_type_name: "gz.msgs.CameraInfo"
-  direction: GZ_TO_ROS
-# IMU
-- ros_topic_name: "/drone/imu"
-  gz_topic_name: "/drone/imu"
-  ros_type_name: "sensor_msgs/msg/Imu"
-  gz_type_name: "gz.msgs.IMU"
-  direction: GZ_TO_ROS
-# Real pose from Gazebo odometry publisher
-- ros_topic_name: "/drone/odometry"
-  gz_topic_name: "/model/drone/odometry_with_covariance"
-  ros_type_name: "nav_msgs/msg/Odometry"
-  gz_type_name: "gz.msgs.OdometryWithCovariance"
-  direction: GZ_TO_ROS
-# Joint states
-- ros_topic_name: "/drone/joint_states"
-  gz_topic_name: "/drone/joint_states"
-  ros_type_name: "sensor_msgs/msg/JointState"
-  gz_type_name: "gz.msgs.Model"
-  direction: GZ_TO_ROS
-# Motor command (to Gazebo)
-- ros_topic_name: "/drone/command/motor_speed"
-  gz_topic_name: "/drone/command/motor_speed"
-  ros_type_name: "actuator_msgs/msg/Actuators"
-  gz_type_name: "gz.msgs.Actuators"
-  direction: ROS_TO_GZ
-# Odometry
-- ros_topic_name: "/drone/odometry"
-  gz_topic_name: "/drone/odometry"
-  ros_type_name: "nav_msgs/msg/Odometry"
-  gz_type_name: "gz.msgs.Odometry"
-  direction: GZ_TO_ROS
-# TF (for visualization)
-- ros_topic_name: "/tf"
-  gz_topic_name: "/drone/tf"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "gz.msgs.Pose_V"
-  direction: GZ_TO_ROS
+# - ros_topic_name: "/tf"
+#   gz_topic_name: "/drone/tf"
+#   ros_type_name: "tf2_msgs/msg/TFMessage"
+#   gz_type_name: "gz.msgs.Pose_V"
+#   direction: GZ_TO_ROS
