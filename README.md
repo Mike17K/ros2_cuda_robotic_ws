@@ -98,3 +98,19 @@ sudo apt update &&
 sudo apt-get install -y ros-jazzy-isaac-ros-nvblox
 
 ```
+
+# Docker development
+
+sudo apt update
+sudo apt install docker-buildx
+
+create an nvidia account and [login -> account -> api key](https://org.ngc.nvidia.com/account/api-keys)
+
+docker login nvcr.io
+Username: Γράψτε ακριβώς τη λέξη $oauthtoken (συμπεριλαμβανομένου του δολαρίου).Password: Κάντε επικόλληση το API Key που αντίγραψατε από το site της NVIDIA.
+
+launch the container
+
+run_dev.sh
+
+the usaac ros common should be on 3.2-15 release
