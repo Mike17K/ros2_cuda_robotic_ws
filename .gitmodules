@@ -4,6 +4,6 @@
 [submodule "src/robots/ewellix_lift"]
 	path = src/robots/ewellix_lift
 	url = https://github.com/clearpathrobotics/ewellix_lift_common.git
-[submodule "docker/cumotion_ws/src/isaac_ros_common"]
-	path = docker/cumotion_ws/src/isaac_ros_common
-	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git
+[submodule "docker/cumotion_ws/src/isaac_ros_cumotion"]
+	path = docker/cumotion_ws/src/isaac_ros_cumotion
+	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion.git
