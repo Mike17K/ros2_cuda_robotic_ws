@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. Rosbridge WebSocket Server
+  rosbridge-server:
+    image: ros:jazzy-ros-core
+    container_name: ros2_rosbridge_server
+    network_mode: "host"
+    ipc: "host"  # <--- Κρίσιμο: Επιτρέπει την ενδοεπικοινωνία μέσω Shared Memory
+    restart: unless-stopped
+    command: >
+      bash -c "apt-get update && apt-get install -y ros-jazzy-rosbridge-suite &&
+               source /opt/ros/jazzy/setup.bash &&
+               ros2 launch rosbridge_server rosbridge_websocket_launch.xml"
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}
+
+  # 2. Your ROS 2 Publisher Application
+  ros2-publisher:
+    image: ros:jazzy-ros-base
+    container_name: ros2_cli_publisher
+    network_mode: "host"
+    ipc: "host"  # <--- Κρίσιμο: Επιτρέπει την ενδοεπικοινωνία μέσω Shared Memory
+    restart: unless-stopped
+    depends_on:
+      - rosbridge-server
+    command: >
+      bash -c "apt-get update && apt-get install -y ros-jazzy-demo-nodes-cpp &&
+               source /opt/ros/jazzy/setup.bash &&
+               ros2 run demo_nodes_cpp talker"
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID}

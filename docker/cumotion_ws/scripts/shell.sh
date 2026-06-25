@@ -13,7 +13,7 @@ function abort {
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE}")" &> /dev/null && pwd)
 cd "$SCRIPT_DIR" || abort "Αποτυχία αλλαγής φακέλου στο $SCRIPT_DIR"
 
-export ISAAC_ROS_WS="$SCRIPT_DIR"
+export ISAAC_ROS_WS="$SCRIPT_DIR/.."
 echo "Το ISAAC_ROS_WS ορίστηκε στο: $ISAAC_ROS_WS"
 
 # Ορίζουμε το config directory ΜΕΣΑ στον φάκελο του workspace
@@ -28,9 +28,7 @@ fi
 # 2. Έλεγχος αν το Isaac ROS CLI είναι εγκατεστημένο και εύρεση της διαδρομής του
 ISAAC_ROS_PATH=$(command -v isaac-ros)
 if [ -z "$ISAAC_ROS_PATH" ]; then
-    echo "Το isaac-ros CLI δεν βρέθηκε. Εγκατάσταση..."
-    sudo apt-get update && sudo apt-get install -y isaac-ros-cli || abort "Η εγκατάσταση απέτυχε"
-    ISAAC_ROS_PATH=$(command -v isaac-ros)
+    abort "Λείπει το isaac-ros-cli. Εγκαταστήστε το στον host."
 fi
 
 # 5. Εκκίνηση του Isaac ROS container

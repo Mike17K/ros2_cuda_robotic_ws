@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "ms-iot.vscode-ros",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.cpp-tools",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "smilerobotics.urdf",
+        "redhat.vscode-xml",
+        "ms-vscode.cmake-tools",
+    ]
+}

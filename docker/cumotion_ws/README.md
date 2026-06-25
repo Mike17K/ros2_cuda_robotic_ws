@@ -5,14 +5,25 @@
 planner [docs cumotion](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion/index.html)
 [quickstart](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion_moveit/index.html#quickstart)
 
+# Scripts
+
+- `scripts/setup_host.sh` : should be runed in the host for setup the proper packages to handle docker setup
+- `scripts/shell.sh` : should be runed in the host, creates container and attaches the shell inside it (user admin)
+- `scripts/setup_workspace.sh` : should be runed in the container after the `shell.sh` and setups and builds the workspace
+
 # Setup
 
+on the host
+
 ```bash
-sudo bash setup_host.sh
-# then in the docker container shell
-sudo apt-get update
-rosdep update && rosdep install --from-paths src
-cd ${ISAAC_ROS_WS} && colcon build --packages-up-to isaac_ros_cumotion_examples
+sudo bash scripts/setup_host.sh
+bash scripts/shell.sh
+```
+
+the shell gets you in the isaac ros container
+
+```bash
+bash scripts/setup_workspace.sh
 ```
 
 # Run
