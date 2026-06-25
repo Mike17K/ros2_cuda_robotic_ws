@@ -1,0 +1,51 @@
+[global_config]
+[keybindings]
+  broadcast_off = <Primary><Shift>h
+  broadcast_all = <Primary><Shift>a
+[profiles]
+  [[default]]
+    scrollback_lines = 5000
+[layouts]
+  [[default]]
+    [[[window0]]]
+      type = Window
+      parent = ""
+    [[[child1]]]
+      type = Terminal
+      parent = window0
+  [[GazeboLayout]]
+    [[[window0]]]
+      type = Window
+      parent = ""
+    [[[split_horiz]]]
+      type = HPaned
+      parent = window0
+    [[[split_vert_left]]]
+      type = VPaned
+      parent = split_horiz
+      order = 0
+    [[[split_vert_right]]]
+      type = VPaned
+      parent = split_horiz
+      order = 1
+    [[[terminal0]]]
+      type = Terminal
+      parent = split_vert_left
+      order = 0
+      title = Camera Input & Params
+    [[[terminal1]]]
+      type = Terminal
+      parent = split_vert_left
+      order = 1
+      title = Camera Understortion
+    [[[terminal2]]]
+      type = Terminal
+      parent = split_vert_right
+      order = 0
+      title = Depth Logic
+    [[[terminal3]]]
+      type = Terminal
+      parent = split_vert_right
+      order = 1
+      title = System Logs
+[plugins]
