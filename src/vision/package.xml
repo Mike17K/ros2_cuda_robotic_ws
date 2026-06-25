@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>vision</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="kaipismike1@gmail.com">kaipis</maintainer>
+  <license>TODO: License declaration</license>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <!-- Εξαρτήσεις για το nvblox της NVIDIA -->
+  <depend>isaac_ros_nvblox</depend>
+
+  <!-- Κρίσιμες εξαρτήσεις για τα NVIDIA Python Launch Utilities -->
+  <depend>isaac_ros_launch_utils</depend>
+  <depend>nvblox_examples_bringup</depend>
+
+  <!-- Εξαρτήσεις για τη γέφυρα με το Gazebo Sim -->
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_interfaces</depend>
+
+  <!-- Standard εξαρτήσεις του ROS 2 για Launch και Components -->
+  <exec_depend>rclcpp_components</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

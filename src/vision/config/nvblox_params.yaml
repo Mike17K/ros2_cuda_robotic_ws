@@ -1,0 +1,23 @@
+/**:
+  nvblox_node:
+    ros__parameters:
+      # --- Ρυθμίσεις Frames (Από Gazebo) ---
+      global_frame: "world"
+      use_depth: true
+      use_color: false
+      use_lidar: false
+
+      # --- Ανάλυση Χάρτη ---
+      voxel_size: 0.05
+
+      # --- Όρια Κάμερας RealSense στο Gazebo ---
+      min_depth_integration_distance_m: 0.4
+      max_depth_integration_distance_m: 4.5
+
+      # --- Χάρτης Εμποδίων για Πλοήγηση (ESDF Slice) ---
+      compute_esdf: true
+      esdf_slice_height: 0.5
+      esdf_slice_min_height: 0.1
+      esdf_slice_max_height: 1.0
+
+      map_update_rate_hz: 10.0
