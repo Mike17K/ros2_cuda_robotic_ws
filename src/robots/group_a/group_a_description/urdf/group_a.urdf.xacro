@@ -19,25 +19,25 @@
   -->
 
   <!-- === Includes === -->
-  <xacro:include filename="$(find ewellix_description)/urdf/ewellix_macro.xacro"/>
-  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
-  <xacro:include filename="$(find ur_description)/urdf/inc/ur_joint_control.xacro"/>
+  <xacro:include filename="$(find ewellix_description)/urdf/ewellix_macro.xacro" />
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro" />
+  <xacro:include filename="$(find ur_description)/urdf/inc/ur_joint_control.xacro" />
 
   <!-- === Arguments === -->
-  <xacro:arg name="namespace"          default="group_a"/>
-  <xacro:arg name="lift_type"          default="ur_620"/>
-  <xacro:arg name="lift_prefix"        default="lift_"/>
-  <xacro:arg name="ur_type"            default="ur10"/>
-  <xacro:arg name="ur_prefix"          default="ur_"/>
-  <xacro:arg name="sim_gazebo"         default="true"/>
-  <xacro:arg name="use_fake_hardware"  default="false"/>
+  <xacro:arg name="namespace" default="group_a" />
+  <xacro:arg name="lift_type" default="ur_620" />
+  <xacro:arg name="lift_prefix" default="lift_" />
+  <xacro:arg name="ur_type" default="ur10" />
+  <xacro:arg name="ur_prefix" default="ur_" />
+  <xacro:arg name="sim_gazebo" default="true" />
+  <xacro:arg name="use_fake_hardware" default="false" />
 
   <!-- Path to the combined controllers yaml — overridable at launch time -->
   <xacro:arg name="simulation_controllers"
-             default="$(find group_a_control)/config/group_a_controllers.yaml"/>
+    default="$(find group_a_control)/config/group_a_controllers.yaml" />
 
   <!-- === World === -->
-  <link name="world"/>
+  <link name="base_footprint" />
 
   <!-- === Ewellix Lift === -->
   <!--
@@ -47,7 +47,7 @@
     It does NOT add the Gazebo plugin — that is our responsibility below.
   -->
   <xacro:ewellix_lift
-    parent="world"
+    parent="base_footprint"
     tf_prefix="$(arg lift_prefix)"
     add_plate="true"
     add_mount="true"
@@ -55,8 +55,8 @@
     generate_ros2_control_tag="true"
     use_fake_hardware="$(arg use_fake_hardware)"
     sim_gazebo="$(arg sim_gazebo)"
-    >
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+  >
+    <origin xyz="0 0 0" rpy="0 0 0" />
   </xacro:ewellix_lift>
 
   <!-- === UR Arm (mounted on ewellix top) === -->
@@ -74,8 +74,8 @@
     kinematics_parameters_file="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"
     physical_parameters_file="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"
     visual_parameters_file="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"
-    >
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+  >
+    <origin xyz="0 0 0" rpy="0 0 0" />
   </xacro:ur_robot>
 
   <!-- UR ros2_control block — ur_macro.xacro does not generate one -->
@@ -88,39 +88,45 @@
         <plugin>mock_components/GenericSystem</plugin>
       </xacro:unless>
     </hardware>
-    <xacro:ur_joint_control_description tf_prefix="$(arg ur_prefix)"/>
+    <xacro:ur_joint_control_description tf_prefix="$(arg ur_prefix)" />
   </ros2_control>
 
   <!-- === Orbbec Camera at UR end-effector === -->
   <link name="camera_link">
     <visual>
       <!-- Placeholder box approximating Orbbec Gemini 2 dimensions -->
-      <geometry><box size="0.040 0.095 0.030"/></geometry>
-      <material name="dark_grey"><color rgba="0.15 0.15 0.15 1.0"/></material>
+      <geometry>
+        <box size="0.040 0.095 0.030" />
+      </geometry>
+      <material name="dark_grey">
+        <color rgba="0.15 0.15 0.15 1.0" />
+      </material>
     </visual>
     <collision>
-      <geometry><box size="0.040 0.095 0.030"/></geometry>
+      <geometry>
+        <box size="0.040 0.095 0.030" />
+      </geometry>
     </collision>
     <inertial>
-      <mass value="0.120"/>
+      <mass value="0.120" />
       <inertia ixx="0.000060" ixy="0.0" ixz="0.0"
-               iyy="0.000060" iyz="0.0" izz="0.000060"/>
+        iyy="0.000060" iyz="0.0" izz="0.000060" />
     </inertial>
   </link>
 
   <joint name="camera_joint" type="fixed">
-    <parent link="$(arg ur_prefix)tool0"/>
-    <child link="camera_link"/>
+    <parent link="$(arg ur_prefix)tool0" />
+    <child link="camera_link" />
     <!-- Camera sits 20 mm forward of the flange, looking along tool Z -->
-    <origin xyz="0 0 0.020" rpy="0 0 0"/>
+    <origin xyz="0 0 0.020" rpy="0 0 0" />
   </joint>
 
   <!-- Optical frame: Z forward, X right, Y down (REP-103 camera convention) -->
-  <link name="camera_optical_frame"/>
+  <link name="camera_optical_frame" />
   <joint name="camera_optical_joint" type="fixed">
-    <parent link="camera_link"/>
-    <child link="camera_optical_frame"/>
-    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_link" />
+    <child link="camera_optical_frame" />
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}" />
   </joint>
 
   <!-- === Gazebo-only blocks (simulation_controllers + sensors) === -->
@@ -136,7 +142,7 @@
     -->
     <gazebo>
       <plugin filename="gz_ros2_control-system"
-              name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        name="gz_ros2_control::GazeboSimROS2ControlPlugin">
         <ros>
           <namespace>$(arg namespace)</namespace>
         </ros>
@@ -146,7 +152,7 @@
 
     <gazebo>
       <plugin filename="libgz-sim-pose-publisher-system.so"
-              name="gz::sim::systems::PosePublisher">
+        name="gz::sim::systems::PosePublisher">
         <publish_link_pose>true</publish_link_pose>
         <publish_nested_model_pose>true</publish_nested_model_pose>
         <use_pose_vector_msg>true</use_pose_vector_msg>
@@ -160,25 +166,34 @@
         <camera>
           <horizontal_fov>1.2120256</horizontal_fov>  <!-- 69.4° -->
           <image>
-            <width>640</width>
-            <height>480</height>
+            <width>320</width>
+            <height>240</height>
             <format>R8G8B8</format>
           </image>
           <clip>
             <near>0.10</near>
-            <far>10.0</far>
+            <far>3.0</far>
           </clip>
           <noise>
             <type>gaussian</type>
             <mean>0.0</mean>
             <stddev>0.007</stddev>
           </noise>
+          <optical_frame_id>$(arg namespace)/camera_optical_frame</optical_frame_id>
         </camera>
         <always_on>1</always_on>
-        <update_rate>30</update_rate>
+        <update_rate>10</update_rate>
         <visualize>false</visualize>
-        <topic>/group_a/camera/rgbd</topic>
+        <topic>/$(arg namespace)/camera/rgbd</topic>
       </sensor>
+    </gazebo>
+
+    <gazebo>
+      <plugin
+        filename="gz-sim-sensors-system"
+        name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
     </gazebo>
   </xacro:if>
 

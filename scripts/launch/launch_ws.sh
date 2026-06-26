@@ -8,7 +8,7 @@ DEFAULT_LONG_DELAY=0.2
 # Η εντολή που προετοιμάζει κάθε νέο terminal panel
 GLOBAL_CMD="cd $WS && source /opt/ros/$ROS_DISTRO/setup.bash && source $WS/install/setup.bash && source $WS/.venv/bin/activate && export PYTHONPATH=\$PYTHONPATH:$WS/external && export ROS_DOMAIN_ID=$ROS_DOMAIN_ID"
 LAYOUT_NAME="GazeboLayout"
-TERMINATOR_CONFIG="$WS/scripts/config/drone.terminator_config"
+TERMINATOR_CONFIG="$WS/scripts/config/terminator_config"
 
 source $WS/scripts/utils.sh
 
@@ -33,9 +33,12 @@ paste_cmd 'ros2 launch simulation gazebo.launch.py'
 
 
 move_right
-paste_cmd "ros2 run tf2_ros static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 1.0 map drone/odom"
+paste_cmd "ros2 launch vision nvblox.launch.py"
 move_right
 # enter
 
 move_down
-paste_cmd "ros2 run rviz2 rviz2 --ros-args -p description_topic:=/drone/robot_description"
+paste_cmd "ros2 run rviz2 rviz2 --ros-args -p description_topic:=/group_a/robot_description"
+
+move_left
+paste_cmd "ros2 run tf2_ros static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 1.0 map group_a/odom"

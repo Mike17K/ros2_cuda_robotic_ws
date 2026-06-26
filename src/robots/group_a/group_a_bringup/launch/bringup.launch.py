@@ -76,16 +76,28 @@ def generate_launch_description():
 
         controller_manager = f"/{namespace}/controller_manager"
 
-        # Single spawner activates all controllers on the one shared controller manager.
-        # joint_state_broadcaster + both JTCs (ewellix lift + UR arm) in one call.
-        controllers_spawner = Node(
+        # 2. Motion controllers spawner: Loaded into memory but kept INACTIVE
+        motion_default_active_controllers_spawner = Node(
             package="controller_manager",
             executable="spawner",
             output="screen",
             arguments=[
-                "joint_state_broadcaster",
                 "lift_joint_trajectory_controller",
                 "ur_joint_trajectory_controller",
+                # "all_joint_trajectory_controller",
+                "--controller-manager",
+                controller_manager,
+            ],
+        )
+        motion_default_inactive_controllers_spawner = Node(
+            package="controller_manager",
+            executable="spawner",
+            output="screen",
+            arguments=[
+                # "lift_joint_trajectory_controller",
+                # "ur_joint_trajectory_controller",
+                "all_joint_trajectory_controller",
+                "--inactive",
                 "--controller-manager",
                 controller_manager,
             ],
@@ -94,7 +106,7 @@ def generate_launch_description():
         return [
             robot_state_publisher,
             controller_manager_node,
-            TimerAction(period=2.0, actions=[controllers_spawner]),
+            TimerAction(period=2.0, actions=[motion_default_active_controllers_spawner, motion_default_inactive_controllers_spawner]),
         ]
 
     return LaunchDescription(
