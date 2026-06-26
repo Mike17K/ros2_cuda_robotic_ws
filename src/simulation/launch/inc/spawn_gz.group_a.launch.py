@@ -31,6 +31,7 @@ def generate_launch_description():
         pkg_description = get_package_share_directory("group_a_description")
         pkg_control = get_package_share_directory("group_a_control")
         pkg_bringup = get_package_share_directory("group_a_bringup")
+        pkg_simulation = get_package_share_directory("simulation")
 
         robot_namespace = LaunchConfiguration("namespace").perform(context)
         lift_type = LaunchConfiguration("lift_type").perform(context)
@@ -38,7 +39,7 @@ def generate_launch_description():
 
         xacro_file = os.path.join(pkg_description, "urdf", "group_a.urdf.xacro")
         simulation_controllers = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
-        bridge_params = os.path.join(pkg_bringup, "config", "gz_bridge.yaml")
+        bridge_params = os.path.join(pkg_simulation, "config", "gz_bridge.yaml")
 
         robot_description_config = cast(
             Any,
@@ -94,23 +95,46 @@ def generate_launch_description():
 
         controller_manager = f"/{robot_namespace}/controller_manager"
 
-        # Single spawner activates all controllers on the one shared controller manager
-        # (created by gz_ros2_control plugin for both ewellix + UR hardware interfaces).
-        controllers_spawner = Node(
+        # 1. Broadcaster spawner: Starts automatically (ACTIVE) so TFs are published immediately
+        joint_state_broadcaster_spawner = Node(
             package="controller_manager",
             executable="spawner",
             output="screen",
             arguments=[
                 "joint_state_broadcaster",
+                "--controller-manager",
+                controller_manager,
+            ],
+        )
+
+        # 2. Motion controllers spawner: Loaded into memory but kept INACTIVE
+        motion_default_active_controllers_spawner = Node(
+            package="controller_manager",
+            executable="spawner",
+            output="screen",
+            arguments=[
                 "lift_joint_trajectory_controller",
                 "ur_joint_trajectory_controller",
+                # "all_joint_trajectory_controller",
+                "--controller-manager",
+                controller_manager,
+            ],
+        )
+        motion_default_inactive_controllers_spawner = Node(
+            package="controller_manager",
+            executable="spawner",
+            output="screen",
+            arguments=[
+                # "lift_joint_trajectory_controller",
+                # "ur_joint_trajectory_controller",
+                "all_joint_trajectory_controller",
+                "--inactive",
                 "--controller-manager",
                 controller_manager,
             ],
         )
 
         # Bridge Gazebo camera / pose topics into ROS 2.
-        # Clock is bridged by the parent simulation launch — not duplicated here.
         ros_gz_bridge = Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
@@ -124,11 +148,13 @@ def generate_launch_description():
             robot_state_publisher,
             spawn_entity,
             ros_gz_bridge,
-            # Delay spawner: Gazebo needs time to load the gz_ros2_control plugin
-            # and register the controller manager node in the ROS graph.
-            TimerAction(period=5.0, actions=[controllers_spawner]),
+            # Delay both spawners by 5 seconds so Gazebo has time to initialize
+            TimerAction(
+                period=5.0, 
+                actions=[joint_state_broadcaster_spawner, motion_default_active_controllers_spawner, motion_default_inactive_controllers_spawner]
+            ),
         ]
-
+    
     return LaunchDescription(
         [
             ns_arg,

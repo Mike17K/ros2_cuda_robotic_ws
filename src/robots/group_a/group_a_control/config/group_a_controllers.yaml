@@ -11,6 +11,9 @@
     ur_joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
+    all_joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
 /group_a/lift_joint_trajectory_controller:
   ros__parameters:
     joints:
@@ -30,6 +33,28 @@
 /group_a/ur_joint_trajectory_controller:
   ros__parameters:
     joints:
+      - ur_shoulder_pan_joint
+      - ur_shoulder_lift_joint
+      - ur_elbow_joint
+      - ur_wrist_1_joint
+      - ur_wrist_2_joint
+      - ur_wrist_3_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+/group_a/all_joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - lift_lower_joint
       - ur_shoulder_pan_joint
       - ur_shoulder_lift_joint
       - ur_elbow_joint
