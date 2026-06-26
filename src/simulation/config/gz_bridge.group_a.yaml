@@ -34,3 +34,11 @@
   ros_type_name: "geometry_msgs/msg/PoseArray"
   gz_type_name: "gz.msgs.Pose_V"
   direction: GZ_TO_ROS
+
+# ─ TF (from PosePublisher plugin) ─────────────────────────────────────────────
+
+- ros_topic_name: "/tf"
+  gz_topic_name: "/group_a/tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS

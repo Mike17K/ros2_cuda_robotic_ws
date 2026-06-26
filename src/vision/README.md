@@ -1,3 +1,9 @@
+# Launch
+
+ros2 launch vision nvblox.launch.py input_type:=depth_image mode:=static
+or
+ros2 launch vision nvblox.launch.py input_type:=pointcloud mode:=static
+
 # Quick Reference: Isaac ROS nvblox + Gazebo Sim + RViz2## 1. System Architecture
 
 [ Gazebo Sim ] ---> (ros_gz_bridge) ---> [ ROS 2 (nvblox_node) ] ---> [ RViz2 ]
