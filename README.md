@@ -1,3 +1,5 @@
+<img src="docs/image.png">
+
 # Setup
 
 ```

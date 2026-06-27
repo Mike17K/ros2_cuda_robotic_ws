@@ -1,9 +1,16 @@
 move_group:
   ros__parameters:
+    # ── Planning Pipelines ──────────────────────────────
     planning_pipelines:
       - ompl
     default_planning_pipeline: ompl
 
+    # ── Octomap / 3D Perception ─────────────────────────
+    octomap_frame: world
+    octomap_resolution: 0.05
+    max_range: 3.0
+
+    # ── OMPL Pipeline ───────────────────────────────────
     ompl:
       planning_plugins:
         - ompl_interface/OMPLPlanner

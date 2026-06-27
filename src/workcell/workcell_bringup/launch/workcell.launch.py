@@ -5,7 +5,8 @@ from launch.actions import (
     DeclareLaunchArgument, 
     IncludeLaunchDescription, 
     GroupAction, 
-    AppendEnvironmentVariable
+    AppendEnvironmentVariable,
+    TimerAction
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -86,18 +87,19 @@ def generate_launch_description():
     # 7. Ορισμός των Ρομπότ στην Κυψέλη Εργασίας
     robots_config = [
         {'name': 'robot_1','xyz': '0.0 0.0 0.0','rpy': '0.0 0.0 0.0'},
-        # {'name': 'robot_2', 'xyz': '20.0 0.0 0.0', 'rpy': '0.0 0.0 3.14159'}
+        # {'name': 'robot_2', 'xyz': '1.0 0.0 0.0', 'rpy': '0.0 0.0 3.14159'},
+        # {'name': 'robot_3', 'xyz': '1.0 1.0 0.0', 'rpy': '0.0 0.0 3.14159'},
+        # {'name': 'robot_4', 'xyz': '0.0 1.0 0.0', 'rpy': '0.0 0.0 3.14159'}
     ]
 
     pkg_group_a_bringup_share = get_package_share_directory('group_a_bringup')
     group_a_launch_path = os.path.join(pkg_group_a_bringup_share, 'launch', 'bringup.launch.py')
 
     # 8. Loop που καλεί το ανεξάρτητο bringup του κάθε ρομπότ
-    for robot in robots_config:
+    for i, robot in enumerate(robots_config):
         robot_stack = GroupAction(
             actions=[
                 PushRosNamespace(robot['name']),
-                
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource(group_a_launch_path),
                     launch_arguments={
@@ -110,7 +112,8 @@ def generate_launch_description():
                 ),
             ]
         )
-        ld.add_action(robot_stack)
+        # Stagger each robot by 0.5s to avoid simultaneous Gazebo spawn requests
+        ld.add_action(TimerAction(period=float(i) * 0.5, actions=[robot_stack]))
 
     return LaunchDescription([
         use_fake_hardware_arg,

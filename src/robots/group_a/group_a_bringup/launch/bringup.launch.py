@@ -1,5 +1,6 @@
 import os
 import yaml
+import tempfile
 from typing import Any, cast
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -8,7 +9,7 @@ from launch.substitutions import LaunchConfiguration
 from launch.conditions import UnlessCondition, IfCondition
 from launch_ros.actions import Node
 import xacro
-import tempfile
+
 
 def generate_launch_description():
     """
@@ -25,20 +26,29 @@ def generate_launch_description():
         default_value="false",
         description="Switch to true if launching inside a Gazebo Simulation environment",
     )
-    lift_type_arg = DeclareLaunchArgument("lift_type", default_value="ur_620", description="Ewellix model type")
-    ur_type_arg = DeclareLaunchArgument("ur_type", default_value="ur10", description="UR robot type")
-    
-    parent_link_arg = DeclareLaunchArgument("parent_link", default_value="world", description="Parent link in the workcell")
-    xyz_arg = DeclareLaunchArgument("xyz", default_value="0.0 0.0 0.0", description="Robot spawn position")
-    rpy_arg = DeclareLaunchArgument("rpy", default_value="0.0 0.0 0.0", description="Robot spawn orientation")
+    lift_type_arg = DeclareLaunchArgument(
+        "lift_type", default_value="ur_620", description="Ewellix model type"
+    )
+    ur_type_arg = DeclareLaunchArgument(
+        "ur_type", default_value="ur10", description="UR robot type"
+    )
+    parent_link_arg = DeclareLaunchArgument(
+        "parent_link", default_value="world", description="Parent link in the workcell"
+    )
+    xyz_arg = DeclareLaunchArgument(
+        "xyz", default_value="0.0 0.0 0.0", description="Robot spawn position"
+    )
+    rpy_arg = DeclareLaunchArgument(
+        "rpy", default_value="0.0 0.0 0.0", description="Robot spawn orientation"
+    )
 
     def launch_setup(context):
         pkg_description = get_package_share_directory("group_a_description")
         pkg_control = get_package_share_directory("group_a_control")
-        pkg_moveit = get_package_share_directory("group_a_moveit_config") 
-        pkg_bringup = get_package_share_directory("group_a_bringup") 
+        pkg_moveit = get_package_share_directory("group_a_moveit_config")
+        pkg_bringup = get_package_share_directory("group_a_bringup")
 
-        # Ανάκτηση τιμών runtime
+        # ── Runtime values ───────────────────────────────────────────────────────
         use_fake_hardware = LaunchConfiguration("use_fake_hardware").perform(context)
         sim_gazebo = LaunchConfiguration("sim_gazebo").perform(context)
         lift_type = LaunchConfiguration("lift_type").perform(context)
@@ -47,17 +57,13 @@ def generate_launch_description():
         xyz = LaunchConfiguration("xyz").perform(context)
         rpy = LaunchConfiguration("rpy").perform(context)
 
-        current_namespace = context.launch_configurations.get('ros_namespace', '')
+        current_namespace = context.launch_configurations.get("ros_namespace", "")
         runtime_namespace = current_namespace if current_namespace else "group_a"
-        runtime_namespace = runtime_namespace.strip("/")  # Αφαίρεση αρχικών και τελικών "/"
+        runtime_namespace = runtime_namespace.strip("/")
         print(f"Current ROS Namespace: '{current_namespace}'")
 
+        # ── Xacro ────────────────────────────────────────────────────────────────
         xacro_file = os.path.join(pkg_description, "urdf", "group_a.urdf.xacro")
-        
-        # Φόρτωση του νέου τοπικού αρχείου σχεδιασμού κίνησης
-        local_planning_yaml = os.path.join(pkg_bringup, "config", "planning.yaml")
-
-        # Επεξεργασία Xacro
         robot_description_config = cast(
             Any,
             xacro.process_file(
@@ -74,27 +80,66 @@ def generate_launch_description():
                 },
             ),
         )
-
         robot_desc = {"robot_description": robot_description_config.toxml()}
 
-        # Φόρτωση MoveIt SRDF
+        # ── MoveIt SRDF ──────────────────────────────────────────────────────────
         srdf_file = os.path.join(pkg_moveit, "config", "combined_system.srdf")
         with open(srdf_file, "r") as f:
             robot_desc_semantic = {"robot_description_semantic": f.read()}
 
-        # Δυναμική φόρτωση Kinematics (Από το autogen MoveIt πακέτο)
+        # ── Kinematics (from autogen MoveIt package) ─────────────────────────────
         kinematics_file = os.path.join(pkg_moveit, "config", "kinematics.yaml")
         with open(kinematics_file, "r") as f:
             raw_kinematics = yaml.safe_load(f)
         kinematics_params = {"robot_description_kinematics": raw_kinematics}
 
-        # Δυναμική φόρτωση Joint Limits (Από το autogen MoveIt πακέτο)
+        # ── Joint Limits (from autogen MoveIt package) ───────────────────────────
         joint_limits_file = os.path.join(pkg_moveit, "config", "joint_limits.yaml")
         with open(joint_limits_file, "r") as f:
             raw_joint_limits = yaml.safe_load(f)
         joint_limits_params = {"robot_description_planning": raw_joint_limits}
 
-        # 1. Robot State Publisher
+        # ── Planning params: loaded as dict (scalars only) → passed LAST to win ──
+        local_planning_yaml_path = os.path.join(pkg_bringup, "config", "planning.yaml")
+        with open(local_planning_yaml_path, "r") as f:
+            local_planning_yaml = yaml.safe_load(f)
+        planning_params = local_planning_yaml.get("move_group", {}).get(
+            "ros__parameters", {}
+        )
+
+        # ── Sensors 3D (nvblox → Octomap): MUST be a file path, not a dict ───────
+        # ROS 2 launch cannot serialize YAML lists as parameter dicts.
+        # We template the namespace and write to a named temp file instead.
+        sensors_3d_template_path = os.path.join(
+            pkg_bringup, "config", "sensors_3d.yaml"
+        )
+        with open(sensors_3d_template_path, "r") as f:
+            sensors_content = f.read()
+        sensors_content = sensors_content.replace("{namespace}", runtime_namespace)
+
+        sensors_tmp = tempfile.NamedTemporaryFile(
+            mode="w",
+            prefix=f"{runtime_namespace}_sensors_3d_",
+            suffix=".yaml",
+            delete=False,  # Must persist on disk after close so move_group can read it
+        )
+        sensors_tmp.write(sensors_content)
+        sensors_tmp.flush()
+        sensors_tmp_path = sensors_tmp.name
+        sensors_tmp.close()
+        print(f"Generating sensors_3d YAML for namespace '{runtime_namespace}' at '{sensors_tmp_path}'")
+
+        # ── Gz bridge YAML (same pattern as sensors) ─────────────────────────────
+        template_bridge_yaml = os.path.join(pkg_bringup, "config", "gz_bridge.yaml")
+        generated_bridge_yaml = f"/tmp/{runtime_namespace}_gz_bridge.yaml"
+        with open(template_bridge_yaml, "r") as f:
+            bridge_content = f.read()
+        print(f"Generating bridge YAML for namespace '{runtime_namespace}' at '{generated_bridge_yaml}'")
+        bridge_content = bridge_content.replace("{namespace}", runtime_namespace)
+        with open(generated_bridge_yaml, "w") as f:
+            f.write(bridge_content)
+
+        # ── 1. Robot State Publisher ─────────────────────────────────────────────
         robot_state_publisher = Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",
@@ -102,10 +147,10 @@ def generate_launch_description():
             parameters=[robot_desc],
         )
 
-
-        controllers_yaml = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
-
-        # 2. Standalone Controller Manager
+        # ── 2. Standalone Controller Manager (real hardware only) ─────────────────
+        controllers_yaml = os.path.join(
+            pkg_control, "config", "group_a_controllers.yaml"
+        )
         controller_manager_node = Node(
             package="controller_manager",
             executable="ros2_control_node",
@@ -114,33 +159,19 @@ def generate_launch_description():
             condition=UnlessCondition(LaunchConfiguration("sim_gazebo")),
         )
 
-        # 3. Gazebo Spawner Node
+        # ── 3. Gazebo Spawner ────────────────────────────────────────────────────
         gazebo_spawn_robot = Node(
             package="ros_gz_sim",
             executable="create",
             output="screen",
             arguments=[
                 "-topic", "robot_description",
-                "-name", current_namespace if current_namespace else "group_a_robot",
-                "-x", xyz.split()[0], "-y", xyz.split()[1], "-z", xyz.split()[2],
-                "-R", rpy.split()[0], "-P", rpy.split()[1], "-Y", rpy.split()[2],
+                "-name", runtime_namespace,
             ],
             condition=IfCondition(LaunchConfiguration("sim_gazebo")),
         )
 
-        # ── Απόλυτη και Ασφαλής Διαδρομή για το Παραγόμενο YAML ───────────────────
-        template_bridge_yaml = os.path.join(pkg_bringup, "config", "gz_bridge.yaml")
-        
-        generated_bridge_yaml = f"/tmp/{runtime_namespace}_gz_bridge.yaml"
-        
-        with open(template_bridge_yaml, "r") as f:
-            bridge_content = f.read()
-        print(f"Generating bridge YAML for namespace '{runtime_namespace}' at '{generated_bridge_yaml}'")
-        bridge_content = bridge_content.replace("{namespace}", runtime_namespace)
-        
-        with open(generated_bridge_yaml, "w") as f:
-            f.write(bridge_content)
-
+        # ── 4. Camera Bridge ─────────────────────────────────────────────────────
         camera_bridge = Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
@@ -151,7 +182,7 @@ def generate_launch_description():
             condition=IfCondition(LaunchConfiguration("sim_gazebo")),
         )
 
-        # 5. Controllers Spawners
+        # ── 5. Controller Spawners ───────────────────────────────────────────────
         motion_default_active_controllers_spawner = Node(
             package="controller_manager",
             executable="spawner",
@@ -164,14 +195,11 @@ def generate_launch_description():
             ],
         )
 
-        local_planning_yaml_path = os.path.join(pkg_bringup, "config", "planning.yaml")
-        with open(local_planning_yaml_path, "r") as f:
-            local_planning_yaml = yaml.safe_load(f)
-
-        # Flatten: extract just ros__parameters for move_group
-        planning_params = local_planning_yaml.get("move_group", {}).get("ros__parameters", {})
-
-        # 6. MoveIt Node
+        # ── 6. MoveIt move_group ─────────────────────────────────────────────────
+        # Parameter loading order matters: last entry wins on key conflicts.
+        #   - planning_params (dict, scalars only) → overrides any autogen pipeline keys
+        #   - sensors_tmp_path (file path string)  → ROS 2 reads list params from file
+        #   - octomap scalars dict                 → simple key/value, safe as dict
         move_group_node = Node(
             package="moveit_ros_move_group",
             executable="move_group",
@@ -183,12 +211,18 @@ def generate_launch_description():
                 joint_limits_params,
                 {"use_sim_time": LaunchConfiguration("sim_gazebo")},
                 planning_params,
+                {
+                    "octomap_frame": "world",
+                    "octomap_resolution": 0.05,
+                    "max_range": 3.0,
+                    # Pass the sensors YAML path as a string parameter —
+                    # move_group reads this key and loads the file itself
+                    "sensors_3d": sensors_tmp_path,
+                },
             ],
-            # Fixes controller_manager 'Waiting for data on robot_description' hang:
-            # Remaps the global check from /group_a/robot_description to its explicit namespace context
             remappings=[
                 ("/robot_description", f"{runtime_namespace}/robot_description")
-            ]
+            ],
         )
 
         return [
@@ -199,7 +233,7 @@ def generate_launch_description():
             move_group_node,
             TimerAction(
                 period=4.0,
-                actions=[motion_default_active_controllers_spawner]
+                actions=[motion_default_active_controllers_spawner],
             ),
         ]
 
