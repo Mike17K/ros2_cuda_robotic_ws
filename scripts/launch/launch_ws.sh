@@ -28,17 +28,17 @@ broadcast_off
 
 # --- PANEL 1 (Πάνω): Camera Input Node ---
 echo "Configuring Panel 1..."
-paste_cmd 'ros2 launch simulation gazebo.launch.py'
+paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false'
 # enter
 
 
 move_right
-paste_cmd "ros2 launch vision nvblox.launch.py"
+paste_cmd "ros2 launch vision nvblox.launch.py robots:=robot_1,robot_2"
 move_right
 # enter
 
 move_down
-paste_cmd "ros2 run rviz2 rviz2 --ros-args -p description_topic:=/group_a/robot_description"
+paste_cmd "ros2 run rviz2 rviz2"
 
 move_left
 paste_cmd "ros2 run tf2_ros static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 1.0 map group_a/odom"

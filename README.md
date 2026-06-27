@@ -1,4 +1,4 @@
-<img src="docs/image.png">
+<img src="docs/shared_nvblox.png">
 
 # Setup
 
@@ -62,6 +62,8 @@ ros2 launch moveit_setup_assistant setup_assistant.launch.py
 ros2 launch workcell_bringup workcell.launch.py
 ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false
 ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=false use_fake_hardware:=false
+
+ros2 run tf2_tools view_frames
 
 # Trubleshooting
 
