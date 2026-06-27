@@ -32,6 +32,8 @@ sudo apt update
 sudo apt install ros-jazzy-ros-gz-sim
 sudo apt install ros-jazzy-ros-gz-bridge
 sudo apt-get install libcanberra-gtk-module libcanberra-gtk3-module
+sudo apt install ros-jazzy-moveit ros-jazzy-geometric-shapes
+
 ```
 
 ```bash
@@ -49,6 +51,15 @@ make
 # Usefull reference
 
 /opt/ros/jazzy/share/nvblox/nvblox_examples_bringup/
+
+# Usefull commands
+
+pkill -f ros2
+
+ros2 launch moveit_setup_assistant setup_assistant.launch.py
+ros2 launch workcell_bringup workcell.launch.py
+ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false
+ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=false use_fake_hardware:=false
 
 # Trubleshooting
 

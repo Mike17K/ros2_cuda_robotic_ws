@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org">
+
+    <!-- Ορισμός του Macro: group_a_robot -->
+    <xacro:macro name="group_a_robot"
+        params="
+        parent
+        namespace='group_a'
+        lift_type='ur_620'
+        lift_prefix='lift_'
+        ur_type='ur10'
+        ur_prefix='ur_'
+        sim_gazebo='true'
+        use_fake_hardware='false'
+        simulation_controllers='$(find group_a_control)/config/group_a_controllers.yaml'
+        *origin"
+    >
+
+        <!-- === Includes === -->
+        <xacro:include filename="$(find ewellix_description)/urdf/ewellix_macro.xacro" />
+        <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro" />
+        <xacro:include filename="$(find ur_description)/urdf/inc/ur_joint_control.xacro" />
+
+        <!-- === Ewellix Lift === -->
+        <xacro:ewellix_lift
+            parent="${parent}"
+            tf_prefix="${lift_prefix}"
+            add_plate="true"
+            add_mount="true"
+            parameters_file="$(find ewellix_description)/config/${lift_type}.yaml"
+            generate_ros2_control_tag="true"
+            use_fake_hardware="${use_fake_hardware}"
+            sim_gazebo="${sim_gazebo}"
+        >
+            <xacro:insert_block name="origin" />
+        </xacro:ewellix_lift>
+
+        <!-- === UR Arm (mounted on ewellix top) === -->
+        <xacro:ur_robot
+            name="${namespace}_${ur_type}"
+            tf_prefix="${ur_prefix}"
+            parent="${lift_prefix}mount"
+            joint_limits_parameters_file="$(find ur_description)/config/${ur_type}/joint_limits.yaml"
+            kinematics_parameters_file="$(find ur_description)/config/${ur_type}/default_kinematics.yaml"
+            physical_parameters_file="$(find ur_description)/config/${ur_type}/physical_parameters.yaml"
+            visual_parameters_file="$(find ur_description)/config/${ur_type}/visual_parameters.yaml"
+        >
+            <origin xyz="0 0 0" rpy="0 0 0" />
+        </xacro:ur_robot>
+
+        <!-- UR ros2_control block (Διορθωμένο Όνομα Υλικού) -->
+        <ros2_control name="${namespace}_${ur_type}_hardware" type="system">
+            <hardware>
+                <xacro:if value="${sim_gazebo}">
+                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+                </xacro:if>
+                <xacro:unless value="${sim_gazebo}">
+                    <plugin>mock_components/GenericSystem</plugin>
+                </xacro:unless>
+            </hardware>
+            <xacro:ur_joint_control_description tf_prefix="${ur_prefix}" />
+        </ros2_control>
+
+        <!-- === Orbbec Camera at UR end-effector (Διορθωμένα Ονόματα) === -->
+        <link name="${namespace}_camera_link">
+            <visual>
+                <geometry>
+                    <box size="0.040 0.095 0.030" />
+                </geometry>
+                <material name="dark_grey">
+                    <color rgba="0.15 0.15 0.15 1.0" />
+                </material>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="0.040 0.095 0.030" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.120" />
+                <inertia ixx="0.000060" ixy="0.0" ixz="0.0"
+                    iyy="0.000060" iyz="0.0" izz="0.000060" />
+            </inertial>
+        </link>
+
+        <joint name="${namespace}_camera_joint" type="fixed">
+            <parent link="${ur_prefix}tool0" />
+            <child link="${namespace}_camera_link" />
+            <origin xyz="0 0 0.020" rpy="0 0 0" />
+        </joint>
+
+        <!-- Optical frame -->
+        <link name="${namespace}_camera_optical_frame" />
+        <joint name="${namespace}_camera_optical_joint" type="fixed">
+            <parent link="${namespace}_camera_link" />
+            <child link="${namespace}_camera_optical_frame" />
+            <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}" />
+        </joint>
+
+        <!-- === Gazebo-only blocks === -->
+        <xacro:if value="${sim_gazebo}">
+            <gazebo>
+                <plugin filename="gz_ros2_control-system"
+                    name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                    <ros>
+                        <namespace>${namespace}</namespace>
+                    </ros>
+                    <parameters>${simulation_controllers}</parameters>
+                </plugin>
+            </gazebo>
+
+            <gazebo>
+                <plugin filename="libgz-sim-pose-publisher-system.so"
+                    name="gz::sim::systems::PosePublisher">
+                    <publish_link_pose>true</publish_link_pose>
+                    <publish_nested_model_pose>true</publish_nested_model_pose>
+                    <use_pose_vector_msg>true</use_pose_vector_msg>
+                    <update_frequency>50</update_frequency>
+                </plugin>
+            </gazebo>
+
+            <!-- Orbbec RGBD sensor -->
+            <gazebo reference="${namespace}_camera_link">
+                <sensor name="${namespace}_orbbec_camera" type="rgbd_camera">
+                    <camera>
+                        <horizontal_fov>1.2120256</horizontal_fov>
+                        <image>
+                            <width>320</width>
+                            <height>240</height>
+                            <format>R8G8B8</format>
+                        </image>
+                        <clip>
+                            <near>0.10</near>
+                            <far>3.0</far>
+                        </clip>
+                        <noise>
+                            <type>gaussian</type>
+                            <mean>0.0</mean>
+                            <stddev>0.007</stddev>
+                        </noise>
+                        <optical_frame_id>${namespace}_camera_optical_frame</optical_frame_id>
+                    </camera>
+                    <always_on>1</always_on>
+                    <update_rate>10</update_rate>
+                    <visualize>false</visualize>
+                    <topic>/${namespace}/camera/rgbd</topic>
+                </sensor>
+            </gazebo>
+        </xacro:if>
+
+    </xacro:macro>
+</robot>
