@@ -1,4 +1,4 @@
-/**/controller_manager:
+/{namespace}/controller_manager:
   ros__parameters:
     update_rate: 500
 
@@ -14,7 +14,7 @@
     all_joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-/**/lift_joint_trajectory_controller:
+/{namespace}/lift_joint_trajectory_controller:
   ros__parameters:
     joints:
       - {namespace}/lift_lower_joint    # ← only joint names need the prefix
@@ -30,7 +30,7 @@
       stopped_velocity_tolerance: 0.0
       goal_time: 0.0
 
-/**/ur_joint_trajectory_controller:
+/{namespace}/ur_joint_trajectory_controller:
   ros__parameters:
     joints:
       - {namespace}/ur_shoulder_pan_joint
@@ -51,7 +51,7 @@
       stopped_velocity_tolerance: 0.0
       goal_time: 0.0
 
-/**/all_joint_trajectory_controller:
+/{namespace}/all_joint_trajectory_controller:
   ros__parameters:
     joints:
       - {namespace}/lift_lower_joint

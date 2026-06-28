@@ -102,9 +102,12 @@ def generate_launch_description():
         robot_desc = {"robot_description": robot_description_config.toxml()}
 
         # ── MoveIt SRDF ──────────────────────────────────────────────────────────
-        srdf_file = os.path.join(pkg_moveit, "config", "combined_system.srdf")
-        with open(srdf_file, "r") as f:
-            robot_desc_semantic = {"robot_description_semantic": f.read()}
+        srdf_file = os.path.join(pkg_description, "config", "combined_system.srdf.xacro")
+        srdf_content = cast(Any, xacro.process_file(
+            srdf_file,
+            mappings={'prefix': f"{runtime_namespace}/"},
+        ))
+        robot_desc_semantic = {"robot_description_semantic": srdf_content.toxml()}
 
         # ── Kinematics (from autogen MoveIt package) ─────────────────────────────
         kinematics_file = os.path.join(pkg_moveit, "config", "kinematics.yaml")

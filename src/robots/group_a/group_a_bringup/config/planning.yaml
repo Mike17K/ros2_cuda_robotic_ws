@@ -4,6 +4,7 @@ move_group:
     planning_pipelines:
       - ompl
     default_planning_pipeline: ompl
+    default_workspace_bounds: 10.0
 
     # ── Octomap / 3D Perception ─────────────────────────
     octomap_frame: world
