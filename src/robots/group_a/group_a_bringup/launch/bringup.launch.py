@@ -62,6 +62,24 @@ def generate_launch_description():
         runtime_namespace = runtime_namespace.strip("/")
         print(f"Current ROS Namespace: '{current_namespace}'")
 
+        # ── Controllers YAML (namespace-substituted) ─────────────────────────────────
+        controllers_template_path = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
+        with open(controllers_template_path, "r") as f:
+            controllers_content = f.read()
+        controllers_content = controllers_content.replace("{namespace}", runtime_namespace)
+
+        controllers_tmp = tempfile.NamedTemporaryFile(
+            mode="w",
+            prefix=f"{runtime_namespace}_controllers_",
+            suffix=".yaml",
+            delete=False,
+        )
+        controllers_tmp.write(controllers_content)
+        controllers_tmp.flush()
+        controllers_tmp_path = controllers_tmp.name
+        controllers_tmp.close()
+        print(f"Generating controllers YAML for namespace '{runtime_namespace}' at '{controllers_tmp_path}'")
+
         # ── Xacro ────────────────────────────────────────────────────────────────
         xacro_file = os.path.join(pkg_description, "urdf", "group_a.urdf.xacro")
         robot_description_config = cast(
@@ -77,6 +95,7 @@ def generate_launch_description():
                     "sim_gazebo": sim_gazebo,
                     "use_fake_hardware": use_fake_hardware,
                     "namespace": runtime_namespace,
+                    "simulation_controllers": controllers_tmp_path,
                 },
             ),
         )
@@ -155,7 +174,7 @@ def generate_launch_description():
             package="controller_manager",
             executable="ros2_control_node",
             output="screen",
-            parameters=[robot_desc, controllers_yaml],
+            parameters=[robot_desc, controllers_tmp_path],
             condition=UnlessCondition(LaunchConfiguration("sim_gazebo")),
         )
 

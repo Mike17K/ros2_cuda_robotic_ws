@@ -17,7 +17,7 @@
 /**/lift_joint_trajectory_controller:
   ros__parameters:
     joints:
-      - lift_lower_joint
+      - {namespace}/lift_lower_joint    # ← only joint names need the prefix
     command_interfaces:
       - position
     state_interfaces:
@@ -33,12 +33,12 @@
 /**/ur_joint_trajectory_controller:
   ros__parameters:
     joints:
-      - ur_shoulder_pan_joint
-      - ur_shoulder_lift_joint
-      - ur_elbow_joint
-      - ur_wrist_1_joint
-      - ur_wrist_2_joint
-      - ur_wrist_3_joint
+      - {namespace}/ur_shoulder_pan_joint
+      - {namespace}/ur_shoulder_lift_joint
+      - {namespace}/ur_elbow_joint
+      - {namespace}/ur_wrist_1_joint
+      - {namespace}/ur_wrist_2_joint
+      - {namespace}/ur_wrist_3_joint
     command_interfaces:
       - position
     state_interfaces:
@@ -54,13 +54,13 @@
 /**/all_joint_trajectory_controller:
   ros__parameters:
     joints:
-      - lift_lower_joint
-      - ur_shoulder_pan_joint
-      - ur_shoulder_lift_joint
-      - ur_elbow_joint
-      - ur_wrist_1_joint
-      - ur_wrist_2_joint
-      - ur_wrist_3_joint
+      - {namespace}/lift_lower_joint
+      - {namespace}/ur_shoulder_pan_joint
+      - {namespace}/ur_shoulder_lift_joint
+      - {namespace}/ur_elbow_joint
+      - {namespace}/ur_wrist_1_joint
+      - {namespace}/ur_wrist_2_joint
+      - {namespace}/ur_wrist_3_joint
     command_interfaces:
       - position
     state_interfaces:
