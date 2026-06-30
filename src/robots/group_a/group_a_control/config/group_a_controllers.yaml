@@ -1,74 +1,75 @@
-/{namespace}/controller_manager:
-  ros__parameters:
-    update_rate: 500
+/**:
+  controller_manager:
+    ros__parameters:
+      update_rate: 500
 
-    joint_state_broadcaster:
-      type: joint_state_broadcaster/JointStateBroadcaster
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
 
-    lift_joint_trajectory_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
+      lift_joint_trajectory_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
 
-    ur_joint_trajectory_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
+      ur_joint_trajectory_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
 
-    all_joint_trajectory_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
+      all_joint_trajectory_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
 
-/{namespace}/lift_joint_trajectory_controller:
-  ros__parameters:
-    joints:
-      - {namespace}/lift_lower_joint    # ← only joint names need the prefix
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
-    state_publish_rate: 10.0
-    action_monitor_rate: 10.0
-    allow_partial_joints_goal: false
-    constraints:
-      stopped_velocity_tolerance: 0.0
-      goal_time: 0.0
+  lift_joint_trajectory_controller:
+    ros__parameters:
+      joints:
+        - $(var tf_prefix)lift_lower_joint    # ← only joint names need the prefix
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      state_publish_rate: 10.0
+      action_monitor_rate: 10.0
+      allow_partial_joints_goal: false
+      constraints:
+        stopped_velocity_tolerance: 0.0
+        goal_time: 0.0
 
-/{namespace}/ur_joint_trajectory_controller:
-  ros__parameters:
-    joints:
-      - {namespace}/ur_shoulder_pan_joint
-      - {namespace}/ur_shoulder_lift_joint
-      - {namespace}/ur_elbow_joint
-      - {namespace}/ur_wrist_1_joint
-      - {namespace}/ur_wrist_2_joint
-      - {namespace}/ur_wrist_3_joint
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
-    state_publish_rate: 100.0
-    action_monitor_rate: 20.0
-    allow_partial_joints_goal: false
-    constraints:
-      stopped_velocity_tolerance: 0.0
-      goal_time: 0.0
+  ur_joint_trajectory_controller:
+    ros__parameters:
+      joints:
+        - $(var tf_prefix)ur_shoulder_pan_joint
+        - $(var tf_prefix)ur_shoulder_lift_joint
+        - $(var tf_prefix)ur_elbow_joint
+        - $(var tf_prefix)ur_wrist_1_joint
+        - $(var tf_prefix)ur_wrist_2_joint
+        - $(var tf_prefix)ur_wrist_3_joint
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      state_publish_rate: 100.0
+      action_monitor_rate: 20.0
+      allow_partial_joints_goal: false
+      constraints:
+        stopped_velocity_tolerance: 0.0
+        goal_time: 0.0
 
-/{namespace}/all_joint_trajectory_controller:
-  ros__parameters:
-    joints:
-      - {namespace}/lift_lower_joint
-      - {namespace}/ur_shoulder_pan_joint
-      - {namespace}/ur_shoulder_lift_joint
-      - {namespace}/ur_elbow_joint
-      - {namespace}/ur_wrist_1_joint
-      - {namespace}/ur_wrist_2_joint
-      - {namespace}/ur_wrist_3_joint
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
-    state_publish_rate: 100.0
-    action_monitor_rate: 20.0
-    allow_partial_joints_goal: false
-    constraints:
-      stopped_velocity_tolerance: 0.0
-      goal_time: 0.0
+  all_joint_trajectory_controller:
+    ros__parameters:
+      joints:
+        - $(var tf_prefix)lift_lower_joint
+        - $(var tf_prefix)ur_shoulder_pan_joint
+        - $(var tf_prefix)ur_shoulder_lift_joint
+        - $(var tf_prefix)ur_elbow_joint
+        - $(var tf_prefix)ur_wrist_1_joint
+        - $(var tf_prefix)ur_wrist_2_joint
+        - $(var tf_prefix)ur_wrist_3_joint
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      state_publish_rate: 100.0
+      action_monitor_rate: 20.0
+      allow_partial_joints_goal: false
+      constraints:
+        stopped_velocity_tolerance: 0.0
+        goal_time: 0.0

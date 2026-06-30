@@ -7,6 +7,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, TimerAction
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import UnlessCondition, IfCondition
+from launch_ros.parameter_descriptions import ParameterFile
 from launch_ros.actions import Node
 import xacro
 
@@ -26,20 +27,16 @@ def generate_launch_description():
         default_value="false",
         description="Switch to true if launching inside a Gazebo Simulation environment",
     )
-    lift_type_arg = DeclareLaunchArgument(
-        "lift_type", default_value="ur_620", description="Ewellix model type"
-    )
-    ur_type_arg = DeclareLaunchArgument(
-        "ur_type", default_value="ur10", description="UR robot type"
-    )
-    parent_link_arg = DeclareLaunchArgument(
-        "parent_link", default_value="world", description="Parent link in the workcell"
-    )
-    xyz_arg = DeclareLaunchArgument(
-        "xyz", default_value="0.0 0.0 0.0", description="Robot spawn position"
-    )
-    rpy_arg = DeclareLaunchArgument(
-        "rpy", default_value="0.0 0.0 0.0", description="Robot spawn orientation"
+    lift_type_arg = DeclareLaunchArgument("lift_type", default_value="ur_620", description="Ewellix model type")
+    ur_type_arg = DeclareLaunchArgument("ur_type", default_value="ur10", description="UR robot type")
+    parent_link_arg = DeclareLaunchArgument("parent_link", default_value="world", description="Parent link in the workcell")
+    xyz_arg = DeclareLaunchArgument("xyz", default_value="0.0 0.0 0.0", description="Robot spawn position")
+    rpy_arg = DeclareLaunchArgument("rpy", default_value="0.0 0.0 0.0", description="Robot spawn orientation")
+
+    tf_prefix_arg = DeclareLaunchArgument(
+        "tf_prefix",
+        default_value="",
+        description="Prefix for all TF frames (useful for multi-robot setups)",
     )
 
     def launch_setup(context):
@@ -66,7 +63,7 @@ def generate_launch_description():
         controllers_template_path = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
         with open(controllers_template_path, "r") as f:
             controllers_content = f.read()
-        controllers_content = controllers_content.replace("{namespace}", runtime_namespace)
+        controllers_content = controllers_content.replace("$(var tf_prefix)", f"{runtime_namespace}/")
 
         controllers_tmp = tempfile.NamedTemporaryFile(
             mode="w",
@@ -103,10 +100,13 @@ def generate_launch_description():
 
         # ── MoveIt SRDF ──────────────────────────────────────────────────────────
         srdf_file = os.path.join(pkg_description, "config", "combined_system.srdf.xacro")
-        srdf_content = cast(Any, xacro.process_file(
-            srdf_file,
-            mappings={'prefix': f"{runtime_namespace}/"},
-        ))
+        srdf_content = cast(
+            Any,
+            xacro.process_file(
+                srdf_file,
+                mappings={"prefix": f"{runtime_namespace}/"},
+            ),
+        )
         robot_desc_semantic = {"robot_description_semantic": srdf_content.toxml()}
 
         # ── Kinematics (from autogen MoveIt package) ─────────────────────────────
@@ -125,16 +125,12 @@ def generate_launch_description():
         local_planning_yaml_path = os.path.join(pkg_bringup, "config", "planning.yaml")
         with open(local_planning_yaml_path, "r") as f:
             local_planning_yaml = yaml.safe_load(f)
-        planning_params = local_planning_yaml.get("move_group", {}).get(
-            "ros__parameters", {}
-        )
+        planning_params = local_planning_yaml.get("move_group", {}).get("ros__parameters", {})
 
         # ── Sensors 3D (nvblox → Octomap): MUST be a file path, not a dict ───────
         # ROS 2 launch cannot serialize YAML lists as parameter dicts.
         # We template the namespace and write to a named temp file instead.
-        sensors_3d_template_path = os.path.join(
-            pkg_bringup, "config", "sensors_3d.yaml"
-        )
+        sensors_3d_template_path = os.path.join(pkg_bringup, "config", "sensors_3d.yaml")
         with open(sensors_3d_template_path, "r") as f:
             sensors_content = f.read()
         sensors_content = sensors_content.replace("{namespace}", runtime_namespace)
@@ -170,14 +166,12 @@ def generate_launch_description():
         )
 
         # ── 2. Standalone Controller Manager (real hardware only) ─────────────────
-        controllers_yaml = os.path.join(
-            pkg_control, "config", "group_a_controllers.yaml"
-        )
+        controllers_yaml = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
         controller_manager_node = Node(
             package="controller_manager",
             executable="ros2_control_node",
             output="screen",
-            parameters=[robot_desc, controllers_tmp_path],
+            parameters=[robot_desc, ParameterFile(controllers_template_path, allow_substs=True)],
             condition=UnlessCondition(LaunchConfiguration("sim_gazebo")),
         )
 
@@ -187,8 +181,10 @@ def generate_launch_description():
             executable="create",
             output="screen",
             arguments=[
-                "-topic", "robot_description",
-                "-name", runtime_namespace,
+                "-topic",
+                "robot_description",
+                "-name",
+                runtime_namespace,
             ],
             condition=IfCondition(LaunchConfiguration("sim_gazebo")),
         )
@@ -213,7 +209,8 @@ def generate_launch_description():
                 "joint_state_broadcaster",
                 "lift_joint_trajectory_controller",
                 "ur_joint_trajectory_controller",
-                "--controller-manager", f"/{runtime_namespace}/controller_manager",
+                "--controller-manager",
+                f"/{runtime_namespace}/controller_manager",
             ],
         )
 
@@ -242,9 +239,7 @@ def generate_launch_description():
                     "sensors_3d": sensors_tmp_path,
                 },
             ],
-            remappings=[
-                ("/robot_description", f"{runtime_namespace}/robot_description")
-            ],
+            remappings=[("/robot_description", f"{runtime_namespace}/robot_description")],
         )
 
         return [
@@ -266,6 +261,7 @@ def generate_launch_description():
             lift_type_arg,
             ur_type_arg,
             parent_link_arg,
+            tf_prefix_arg,
             xyz_arg,
             rpy_arg,
             OpaqueFunction(function=launch_setup),
