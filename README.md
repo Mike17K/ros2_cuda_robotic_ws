@@ -108,8 +108,7 @@ versions/$LATEST_VERSION_ID/files/$NGC_FILENAME" && \
     rm ${NGC_FILENAME}
 fi
 
-sudo apt update &&
-sudo apt-get install -y ros-jazzy-isaac-ros-nvblox
+sudo apt update && sudo apt-get install -y ros-jazzy-isaac-ros-nvblox
 
 ```
 

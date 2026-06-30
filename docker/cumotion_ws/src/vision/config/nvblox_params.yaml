@@ -1,0 +1,126 @@
+/**:
+  nvblox_node:
+    ros__parameters:
+      # ── Frames ────────────────────────────────────────────────────────────────
+      # For a static arm: global_frame = world (fixed, shared across all robots)
+      # body_frame = the robot's base link in the TF tree
+      # These will be remapped per-robot in the launch file via ros remappings
+      global_frame: "world"
+      body_frame: "world" # arm is fixed, not mobile
+
+      # ── Core settings ─────────────────────────────────────────────────────────
+      cuda_stream_type: 1
+      voxel_size: 0.05
+      num_cameras: 1
+      use_tf_transforms: true
+      mapping_type: "static_tsdf"
+
+      # ── Processing rates ──────────────────────────────────────────────────────
+      tick_period_ms: 10
+      integrate_depth_rate_hz: 40.0
+      integrate_color_rate_hz: 5.0
+      integrate_lidar_rate_hz: 40.0
+      update_mesh_rate_hz: 5.0
+      update_esdf_rate_hz: 10.0
+      publish_layer_rate_hz: 5.0
+      publish_debug_vis_rate_hz: 2.0
+      decay_tsdf_rate_hz: 5.0
+      decay_dynamic_occupancy_rate_hz: 10.0
+      clear_map_outside_radius_rate_hz: 1.0
+
+      # ── Console output ────────────────────────────────────────────────────────
+      print_rates_to_console: false
+      print_timings_to_console: false
+      print_delays_to_console: false
+      print_queue_drops_to_console: false
+      print_statistics_on_console_period_ms: 10000
+
+      # ── ESDF ─────────────────────────────────────────────────────────────────
+      # Use 3d for arm manipulation — 2d is for ground-plane mobile robots
+      esdf_mode: "3d"
+      publish_esdf_distance_slice: false # not useful in 3d arm context
+
+      # ── Sensor usage ──────────────────────────────────────────────────────────
+      use_color: true
+      use_depth: true
+      use_lidar: false
+
+      # ── Input queues ──────────────────────────────────────────────────────────
+      maximum_input_queue_length: 10
+
+      # ── Map clearing ──────────────────────────────────────────────────────────
+      # Arm workspace is bounded — clear aggressively around the robot
+      map_clearing_radius_m: 3.0
+      map_clearing_frame_id: "world" # fixed frame for static arm
+
+      # ── QoS ───────────────────────────────────────────────────────────────────
+      input_qos: "SYSTEM_DEFAULT"
+
+      # ── Visualization ─────────────────────────────────────────────────────────
+      # All visualization frames anchored to world for a fixed arm
+      esdf_slice_bounds_visualization_attachment_frame_id: "world"
+      esdf_slice_bounds_visualization_side_length: 4.0
+      workspace_height_bounds_visualization_attachment_frame_id: "world"
+      workspace_height_bounds_visualization_side_length: 4.0
+      layer_visualization_min_tsdf_weight: 0.1
+      layer_visualization_exclusion_height_m: 2.5
+      layer_visualization_exclusion_radius_m: 3.0
+      layer_visualization_undo_gamma_correction: false
+      max_back_projection_distance: 3.0 # match camera far clip (3.0m)
+      back_projection_subsampling: 1
+      layer_streamer_bandwidth_limit_mbps: -1.0
+
+      multi_mapper:
+        connected_mask_component_size_threshold: 2000
+        remove_small_connected_components: true
+
+      static_mapper:
+        # ── Depth preprocessing ─────────────────────────────────────────────────
+        do_depth_preprocessing: false
+        depth_preprocessing_num_dilations: 3
+
+        # ── Projective integrator ───────────────────────────────────────────────
+        # Match camera far clip distance (3.0m in your Gazebo sensor)
+        projective_integrator_max_integration_distance_m: 3.0
+        projective_integrator_truncation_distance_vox: 4.0
+        projective_integrator_weighting_mode: "inverse_square_tsdf_distance_penalty"
+        projective_integrator_max_weight: 5.0
+        projective_tsdf_integrator_invalid_depth_decay_factor: -1.0
+
+        # ── Occupancy integrator ────────────────────────────────────────────────
+        free_region_occupancy_probability: 0.45
+        occupied_region_occupancy_probability: 0.55
+        unobserved_region_occupancy_probability: 0.5
+        occupied_region_half_width_m: 0.1
+
+        # ── View calculator ─────────────────────────────────────────────────────
+        raycast_subsampling_factor: 4
+        # Bound the workspace to the arm's reachable volume
+        # Adjust these to match your UR10 + Ewellix reach envelope
+        workspace_bounds_type: "height_bounds"
+        workspace_bounds_min_corner_x_m: 0.0 # unused in height_bounds mode
+        workspace_bounds_min_corner_y_m: 0.0
+        workspace_bounds_min_height_m: -0.1 # just below floor mount
+        workspace_bounds_max_corner_x_m: 0.0
+        workspace_bounds_max_corner_y_m: 0.0
+        workspace_bounds_max_height_m: 2.5 # ewellix max height + ur reach
+
+        # ── ESDF integrator ─────────────────────────────────────────────────────
+        esdf_integrator_min_weight: 0.1
+        esdf_integrator_max_site_distance_vox: 2.0
+        esdf_integrator_max_distance_m: 2.0
+
+        # ── Mesh integrator ─────────────────────────────────────────────────────
+        mesh_integrator_min_weight: 0.1
+        mesh_integrator_weld_vertices: true
+
+        # ── TSDF decay ──────────────────────────────────────────────────────────
+        tsdf_decay_factor: 0.95
+        tsdf_decayed_weight_threshold: 0.001
+        tsdf_set_free_distance_on_decayed: false
+        tsdf_decayed_free_distance_vox: 4.0
+        decay_integrator_deallocate_decayed_blocks: true
+
+        # ── Mesh streamer ────────────────────────────────────────────────────────
+        layer_streamer_exclusion_height_m: 2.5
+        layer_streamer_exclusion_radius_m: 3.0
