@@ -5,7 +5,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
+from launch_ros.parameter_descriptions import ParameterFile
 
 def generate_launch_description():
     """
@@ -48,10 +48,6 @@ def generate_launch_description():
             raw_kinematics = yaml.safe_load(f)
         kinematics_params = {"robot_description_kinematics": raw_kinematics}
 
-        planning_yaml = os.path.join(pkg_bringup, "config", "planning.yaml")
-        with open(planning_yaml, "r") as f:
-            planning_params = yaml.safe_load(f)
-
         rviz_node = Node(
             package="rviz2",
             executable="rviz2",
@@ -60,7 +56,7 @@ def generate_launch_description():
             arguments=["-d", LaunchConfiguration("rviz_config")],
             parameters=[
                 kinematics_params,
-                planning_params,
+                ParameterFile(os.path.join(pkg_moveit, "config", "planning.yaml"), allow_substs=True),
                 {"use_sim_time": LaunchConfiguration("use_sim_time")},
             ],
             remappings=[

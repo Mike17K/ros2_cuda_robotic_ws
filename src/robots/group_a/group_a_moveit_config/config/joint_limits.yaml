@@ -18,8 +18,8 @@
         max_position: 0.30 # Από τα specs της Ewelix (lower.joint.limit.upper)
         has_velocity_limits: true
         max_velocity: 0.088 # Από τα specs της Ewelix (lower.joint.limit.velocity)
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 0.2
 
       $(var namespace)/lift_upper_joint:
         has_position_limits: true
@@ -27,8 +27,8 @@
         max_position: 0.30 # Από τα specs της Ewelix (upper.joint.limit.upper)
         has_velocity_limits: true
         max_velocity: 0.088 # Από τα specs της Ewelix (upper.joint.limit.velocity)
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 0.2
 
       # --- Universal Robots UR10 CB3 Joints (Converted to Radians) ---
       $(var namespace)/ur_shoulder_pan_joint:
@@ -37,8 +37,8 @@
         max_position: 6.283185307179586 # 360 μοίρες σε ακτίνια
         has_velocity_limits: true
         max_velocity: 2.0943951023931953 # 120 μοίρες/sec σε ακτίνια
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 5.0
 
       $(var namespace)/ur_shoulder_lift_joint:
         has_position_limits: true
@@ -46,8 +46,8 @@
         max_position: 6.283185307179586 # 360 μοίρες σε ακτίνια
         has_velocity_limits: true
         max_velocity: 2.0943951023931953 # 120 μοίρες/sec σε ακτίνια
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 5.0
 
       $(var namespace)/ur_elbow_joint:
         has_position_limits: true
@@ -55,8 +55,8 @@
         max_position: 3.141592653589793 # 180 μοίρες σε ακτίνια (τεχνητός περιορισμός λόγω MoveIt)
         has_velocity_limits: true
         max_velocity: 3.141592653589793 # 180 μοίρες/sec σε ακτίνια
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 5.0
 
       $(var namespace)/ur_wrist_1_joint:
         has_position_limits: true
@@ -64,8 +64,8 @@
         max_position: 6.283185307179586 # 360 μοίρες σε ακτίνια
         has_velocity_limits: true
         max_velocity: 3.141592653589793 # 180 μοίρες/sec σε ακτίνια
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 5.0
 
       $(var namespace)/ur_wrist_2_joint:
         has_position_limits: true
@@ -73,8 +73,8 @@
         max_position: 6.283185307179586 # 360 μοίρες σε ακτίνια
         has_velocity_limits: true
         max_velocity: 3.141592653589793 # 180 μοίρες/sec σε ακτίνια
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 5.0
 
       $(var namespace)/ur_wrist_3_joint:
         has_position_limits: true
@@ -82,5 +82,5 @@
         max_position: 6.283185307179586 # 360 μοίρες σε ακτίνια
         has_velocity_limits: true
         max_velocity: 3.141592653589793 # 180 μοίρες/sec σε ακτίνια
-        has_acceleration_limits: false
-        max_acceleration: 0
+        has_acceleration_limits: true
+        max_acceleration: 5.0

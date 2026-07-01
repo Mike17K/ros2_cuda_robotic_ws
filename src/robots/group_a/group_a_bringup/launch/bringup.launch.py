@@ -132,7 +132,10 @@ def generate_launch_description():
             package="robot_state_publisher",
             executable="robot_state_publisher",
             output="screen",
-            parameters=[robot_desc],
+            parameters=[
+                robot_desc,
+                {"use_sim_time": LaunchConfiguration("sim_gazebo")},
+            ],
         )
 
         # ── 2. Standalone Controller Manager (real hardware only) ─────────────────
@@ -140,7 +143,11 @@ def generate_launch_description():
             package="controller_manager",
             executable="ros2_control_node",
             output="screen",
-            parameters=[robot_desc, ParameterFile(controllers_template_path, allow_substs=True)],
+            parameters=[
+                robot_desc, 
+                ParameterFile(controllers_template_path, allow_substs=True),
+                {"use_sim_time": LaunchConfiguration("sim_gazebo")},
+            ],
             condition=UnlessCondition(LaunchConfiguration("sim_gazebo")),
             remappings=[("/robot_description", f"{runtime_namespace}/robot_description")],
         )
@@ -191,7 +198,6 @@ def generate_launch_description():
         #   - octomap scalars dict                 → simple key/value, safe as dict
         moveit_config = (
             MoveItConfigsBuilder(runtime_namespace, package_name="group_a_moveit_config")
-            .planning_pipelines(pipelines=["ompl", "chomp", "stomp", "pilz_industrial_motion_planner"])
             .planning_scene_monitor(
                 publish_geometry_updates=True,
                 publish_state_updates=True,
@@ -212,6 +218,7 @@ def generate_launch_description():
                 robot_desc_semantic,
                 kinematics_params,
                 ParameterFile(os.path.join(pkg_moveit, "config", "joint_limits.yaml"), allow_substs=True),
+                ParameterFile(os.path.join(pkg_moveit, "config", "planning.yaml"), allow_substs=True),
                 {"use_sim_time": LaunchConfiguration("sim_gazebo")},
                 {
                     "octomap_frame": "world",

@@ -1,8 +1,0 @@
-/**:
-  ros__parameters:
-    planning_pipelines:
-      pipeline_names:
-        ["ompl", "chomp", "stomp", "pilz_industrial_motion_planner"]
-      namespace: "move_group"
-
-    default_planning_pipeline: "ompl"
