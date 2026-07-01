@@ -90,7 +90,7 @@ def generate_launch_description():
                         "rpy": robot["rpy"],
                         "sim_gazebo": LaunchConfiguration("sim_gazebo"),
                         "use_fake_hardware": LaunchConfiguration("use_fake_hardware"),
-                        "tf_prefix": robot["name"] + "/",
+                        "namespace": robot["name"],
                     }.items(),
                 ),
             ]

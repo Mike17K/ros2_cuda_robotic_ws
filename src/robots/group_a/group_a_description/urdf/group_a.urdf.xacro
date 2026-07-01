@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="combined_system" xmlns:xacro="http://ros.org">
+<robot name="combined_system" xmlns:xacro="http://ros.org/xacro">
 
   <!-- 1. Δήλωση των Arguments που γίνονται inject από το Launch Setup -->
   <xacro:arg name="parent" default="world" />
@@ -10,7 +10,8 @@
   <xacro:arg name="ur_type" default="ur10" />
   <xacro:arg name="sim_gazebo" default="false" />
   <xacro:arg name="use_fake_hardware" default="true" />
-  <xacro:arg name="namespace" default="group_a" />
+  <xacro:arg name="tf_prefix" default="" />
+  <xacro:arg name="namespace" default="" />
   <xacro:arg name="simulation_controllers"
     default='$(find group_a_bringup)/config/controllers.yaml' />
 
@@ -29,6 +30,7 @@
     ur_type="$(arg ur_type)"
     sim_gazebo="$(arg sim_gazebo)"
     use_fake_hardware="$(arg use_fake_hardware)"
+    tf_prefix="$(arg tf_prefix)"
     namespace="$(arg namespace)"
     simulation_controllers="$(arg simulation_controllers)"
   >
