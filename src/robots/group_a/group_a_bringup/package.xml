@@ -10,7 +10,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>group_a_description</depend>
-  <depend>group_a_control</depend>
   <depend>robot_state_publisher</depend>
   <depend>controller_manager</depend>
   <depend>ros_gz_sim</depend>

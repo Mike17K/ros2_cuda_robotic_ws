@@ -12,7 +12,7 @@
   <xacro:arg name="use_fake_hardware" default="true" />
   <xacro:arg name="namespace" default="group_a" />
   <xacro:arg name="simulation_controllers"
-    default='$(find group_a_control)/config/group_a_controllers.yaml' />
+    default='$(find group_a_bringup)/config/controllers.yaml' />
 
   <!-- 2. Include του αρχείου Macro -->
   <xacro:include filename="$(find group_a_description)/urdf/group_a_macro.xacro" />

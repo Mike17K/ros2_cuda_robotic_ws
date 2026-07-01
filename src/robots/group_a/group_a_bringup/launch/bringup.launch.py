@@ -10,7 +10,8 @@ from launch.conditions import UnlessCondition, IfCondition
 from launch_ros.parameter_descriptions import ParameterFile
 from launch_ros.actions import Node
 import xacro
-
+from moveit_configs_utils import MoveItConfigsBuilder
+from launch_ros.actions import Node
 
 def generate_launch_description():
     """
@@ -41,7 +42,6 @@ def generate_launch_description():
 
     def launch_setup(context):
         pkg_description = get_package_share_directory("group_a_description")
-        pkg_control = get_package_share_directory("group_a_control")
         pkg_moveit = get_package_share_directory("group_a_moveit_config")
         pkg_bringup = get_package_share_directory("group_a_bringup")
 
@@ -60,7 +60,7 @@ def generate_launch_description():
         print(f"Current ROS Namespace: '{current_namespace}'")
 
         # ── Controllers YAML (namespace-substituted) ─────────────────────────────────
-        controllers_template_path = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
+        controllers_template_path = os.path.join(pkg_bringup, "config", "controllers.yaml")
         with open(controllers_template_path, "r") as f:
             controllers_content = f.read()
         controllers_content = controllers_content.replace("$(var tf_prefix)", f"{runtime_namespace}/")
@@ -166,7 +166,6 @@ def generate_launch_description():
         )
 
         # ── 2. Standalone Controller Manager (real hardware only) ─────────────────
-        controllers_yaml = os.path.join(pkg_control, "config", "group_a_controllers.yaml")
         controller_manager_node = Node(
             package="controller_manager",
             executable="ros2_control_node",
@@ -219,6 +218,7 @@ def generate_launch_description():
         #   - planning_params (dict, scalars only) → overrides any autogen pipeline keys
         #   - sensors_tmp_path (file path string)  → ROS 2 reads list params from file
         #   - octomap scalars dict                 → simple key/value, safe as dict
+        # TODO to check MoveItConfigsBuilder
         move_group_node = Node(
             package="moveit_ros_move_group",
             executable="move_group",

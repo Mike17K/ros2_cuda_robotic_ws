@@ -9,7 +9,7 @@
         ur_type='ur10'
         sim_gazebo='true'
         use_fake_hardware='false'
-        simulation_controllers='$(find group_a_control)/config/group_a_controllers.yaml'
+        simulation_controllers='$(find group_a_bringup)/config/controllers.yaml'
         *origin"
     >
 

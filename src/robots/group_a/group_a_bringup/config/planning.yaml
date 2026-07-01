@@ -13,8 +13,7 @@ move_group:
 
     # ── OMPL Pipeline ───────────────────────────────────
     ompl:
-      planning_plugins:
-        - ompl_interface/OMPLPlanner
+      planning_plugin: ompl_interface/OMPLPlanner
       request_adapters:
         - default_planning_request_adapters/ResolveConstraintFrames
         - default_planning_request_adapters/ValidateWorkspaceBounds
