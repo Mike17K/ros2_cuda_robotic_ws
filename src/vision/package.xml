@@ -14,6 +14,7 @@
 
   <!-- Εξαρτήσεις για το nvblox της NVIDIA -->
   <depend>isaac_ros_nvblox</depend>
+  <depend>moveit_ros_perception</depend>
 
   <!-- Κρίσιμες εξαρτήσεις για τα NVIDIA Python Launch Utilities -->
   <depend>isaac_ros_launch_utils</depend>

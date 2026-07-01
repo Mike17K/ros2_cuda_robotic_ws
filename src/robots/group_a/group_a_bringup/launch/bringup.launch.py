@@ -117,12 +117,6 @@ def generate_launch_description():
             raw_kinematics = yaml.safe_load(f)
         kinematics_params = {"robot_description_kinematics": raw_kinematics}
 
-        # ── Joint Limits (from autogen MoveIt package) ───────────────────────────
-        joint_limits_file = os.path.join(pkg_moveit, "config", "joint_limits.yaml")
-        with open(joint_limits_file, "r") as f:
-            raw_joint_limits = yaml.safe_load(f)
-        joint_limits_params = {"robot_description_planning": raw_joint_limits}
-
         # ── Gz bridge YAML (same pattern as sensors) ─────────────────────────────
         template_bridge_yaml = os.path.join(pkg_bringup, "config", "gz_bridge.yaml")
         generated_bridge_yaml = f"/tmp/{runtime_namespace}_gz_bridge.yaml"
@@ -195,27 +189,44 @@ def generate_launch_description():
         #   - planning_params (dict, scalars only) → overrides any autogen pipeline keys
         #   - sensors_tmp_path (file path string)  → ROS 2 reads list params from file
         #   - octomap scalars dict                 → simple key/value, safe as dict
-        # TODO to check MoveItConfigsBuilder
-        moveit_params = MoveItConfigsBuilder(robot_name=runtime_namespace, package_name="group_a_moveit_config")
-        os.path.join(pkg_bringup, "config", "planning.yaml")
+        moveit_config = (
+            MoveItConfigsBuilder(runtime_namespace, package_name="group_a_moveit_config")
+            .planning_pipelines(pipelines=["ompl", "chomp", "stomp", "pilz_industrial_motion_planner"])
+            .planning_scene_monitor(
+                publish_geometry_updates=True,
+                publish_state_updates=True,
+                publish_transforms_updates=True,
+                publish_planning_scene=True,
+                publish_robot_description=True,
+                publish_robot_description_semantic=True,
+            )
+            .to_moveit_configs()
+        )
         move_group_node = Node(
             package="moveit_ros_move_group",
             executable="move_group",
             output="screen",
             parameters=[
+                moveit_config.to_dict(),
                 robot_desc,
                 robot_desc_semantic,
                 kinematics_params,
-                joint_limits_params,
+                ParameterFile(os.path.join(pkg_moveit, "config", "joint_limits.yaml"), allow_substs=True),
                 {"use_sim_time": LaunchConfiguration("sim_gazebo")},
-                moveit_params.to_dict(),
                 {
                     "octomap_frame": "world",
                     "octomap_resolution": 0.05,
                     "max_range": 3.0,
+                    "workspace_bounds": {
+                        "min_x": -5.0,
+                        "min_y": -5.0,
+                        "min_z": -2.0,
+                        "max_x": 5.0,
+                        "max_y": 5.0,
+                        "max_z": 5.0,
+                    },
                 },
                 ParameterFile(os.path.join(pkg_bringup, "config", "sensors_3d.yaml"), allow_substs=True),
-                # TODO add planning yaml
             ],
             remappings=[
                 ("/robot_description", f"{runtime_namespace}/robot_description"),

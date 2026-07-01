@@ -38,7 +38,7 @@ move_right
 # enter
 
 move_down
-paste_cmd "ros2 run rviz2 rviz2"
+paste_cmd "ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1"
 
 move_left
 paste_cmd "ros2 run tf2_ros static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 1.0 map group_a/odom"

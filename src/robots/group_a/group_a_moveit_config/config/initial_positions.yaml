@@ -1,7 +1,7 @@
 # Default initial positions for combined_system's ros2_control fake system
 
 initial_positions:
-  lift_lower_joint: 0
+  lift_lower_joint: 0.001
   ur_elbow_joint: 0
   ur_shoulder_lift_joint: 0
   ur_shoulder_pan_joint: 0

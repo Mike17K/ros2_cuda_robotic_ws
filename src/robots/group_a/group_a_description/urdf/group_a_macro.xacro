@@ -43,6 +43,7 @@
             generate_ros2_control_tag="true"
             use_fake_hardware="${use_fake_hardware}"
             sim_gazebo="${sim_gazebo}"
+            initial_positions="${dict(upper=0.0, lower=0.0)}"
         >
             <xacro:insert_block name="origin" />
         </xacro:ewellix_lift>
