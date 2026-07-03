@@ -75,7 +75,7 @@ def launch_setup(context):
             publish_robot_description_semantic=True,
         )
         .sensors_3d(str(sensors_3d_file_path))
-        .planning_pipelines("ompl",["ompl", "chomp", "pilz_industrial_motion_planner"])
+        .planning_pipelines("ompl",["ompl", "chomp","stomp", "pilz_industrial_motion_planner"])
         .pilz_cartesian_limits(os.path.join(pkg_moveit, "config", "pilz_cartesian_limits.yaml"))
         .to_moveit_configs()
         .to_dict()
