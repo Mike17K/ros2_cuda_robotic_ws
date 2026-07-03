@@ -2,34 +2,34 @@
 
 # ── Orbbec camera ──────────────────────────────────────────────────────────────
 
-- ros_topic_name: "/{namespace}/camera/color/image_raw"
-  gz_topic_name: "/{namespace}/camera/rgbd/image"
+- ros_topic_name: "/$(var namespace)/camera/color/image_raw"
+  gz_topic_name: "/$(var namespace)/camera/rgbd/image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/{namespace}/camera/depth/image_raw"
-  gz_topic_name: "/{namespace}/camera/rgbd/depth_image"
+- ros_topic_name: "/$(var namespace)/camera/depth/image_raw"
+  gz_topic_name: "/$(var namespace)/camera/rgbd/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/{namespace}/camera/depth/points"
-  gz_topic_name: "/{namespace}/camera/rgbd/points"
+- ros_topic_name: "/$(var namespace)/camera/depth/points"
+  gz_topic_name: "/$(var namespace)/camera/rgbd/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/{namespace}/camera/color/camera_info"
-  gz_topic_name: "/{namespace}/camera/rgbd/camera_info"
+- ros_topic_name: "/$(var namespace)/camera/color/camera_info"
+  gz_topic_name: "/$(var namespace)/camera/rgbd/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
 # ── Odometry (from PosePublisher plugin) ───────────────────────────────────────
 
-- ros_topic_name: "/{namespace}/pose"
-  gz_topic_name: "/model/{namespace}/pose"
+- ros_topic_name: "/$(var namespace)/pose"
+  gz_topic_name: "/model/$(var namespace)/pose"
   ros_type_name: "geometry_msgs/msg/PoseArray"
   gz_type_name: "gz.msgs.Pose_V"
   direction: GZ_TO_ROS
@@ -37,7 +37,7 @@
 # ── TF (from PosePublisher plugin) ─────────────────────────────────────────────
 
 - ros_topic_name: "/tf"
-  gz_topic_name: "/{namespace}/tf"
+  gz_topic_name: "/$(var namespace)/tf"
   ros_type_name: "tf2_msgs/msg/TFMessage"
   gz_type_name: "gz.msgs.Pose_V"
   direction: GZ_TO_ROS

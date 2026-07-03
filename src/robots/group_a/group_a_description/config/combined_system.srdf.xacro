@@ -7,57 +7,105 @@ group_a_moveit_config package. The original file is located at:
 <robot xmlns:xacro="http://ros.org/xacro" name="combined_system">
 
     <!-- Ορισμός παραμέτρου prefix (κενό ως προεπιλογή) -->
+    <xacro:arg name="namespace" default="" />
     <xacro:arg name="tf_prefix" default="" />
 
     <group name="all">
-        <chain base_link="$(arg tf_prefix)lift_base_link" tip_link="$(arg tf_prefix)ur_ft_frame"/>
+        <chain base_link="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+            tip_link="$(arg namespace)/$(arg tf_prefix)ur_ft_frame" />
     </group>
     <group name="lift">
-        <chain base_link="$(arg tf_prefix)lift_base_link" tip_link="$(arg tf_prefix)lift_mount"/>
+        <chain base_link="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+            tip_link="$(arg namespace)/$(arg tf_prefix)lift_mount" />
     </group>
     <group name="ur">
-        <chain base_link="$(arg tf_prefix)ur_base_link" tip_link="$(arg tf_prefix)ur_ft_frame"/>
+        <chain base_link="$(arg namespace)/$(arg tf_prefix)ur_base_link"
+            tip_link="$(arg namespace)/$(arg tf_prefix)ur_ft_frame" />
     </group>
-    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="world_joint" type="fixed" parent_frame="world" child_link="$(arg tf_prefix)lift_base_link"/>
-    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="$(arg tf_prefix)camera_link" link2="$(arg tf_prefix)ur_wrist_1_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)camera_link" link2="$(arg tf_prefix)ur_wrist_2_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)camera_link" link2="$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_base_link" link2="$(arg tf_prefix)lift_lower_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_base_link" link2="$(arg tf_prefix)lift_mount_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_base_link" link2="$(arg tf_prefix)lift_plate_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_base_link" link2="$(arg tf_prefix)lift_upper_link" reason="Default"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_base_link" link2="$(arg tf_prefix)ur_base_link_inertia" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_base_link" link2="$(arg tf_prefix)ur_shoulder_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_lower_link" link2="$(arg tf_prefix)lift_mount_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_lower_link" link2="$(arg tf_prefix)lift_plate_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_lower_link" link2="$(arg tf_prefix)lift_upper_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_lower_link" link2="$(arg tf_prefix)ur_base_link_inertia" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_lower_link" link2="$(arg tf_prefix)ur_shoulder_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_lower_link" link2="$(arg tf_prefix)ur_upper_arm_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_mount_link" link2="$(arg tf_prefix)lift_plate_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_mount_link" link2="$(arg tf_prefix)lift_upper_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_mount_link" link2="$(arg tf_prefix)ur_base_link_inertia" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_mount_link" link2="$(arg tf_prefix)ur_shoulder_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_plate_link" link2="$(arg tf_prefix)lift_upper_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_plate_link" link2="$(arg tf_prefix)ur_base_link_inertia" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_plate_link" link2="$(arg tf_prefix)ur_shoulder_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_plate_link" link2="$(arg tf_prefix)ur_upper_arm_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_upper_link" link2="$(arg tf_prefix)ur_base_link_inertia" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_upper_link" link2="$(arg tf_prefix)ur_shoulder_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_upper_link" link2="$(arg tf_prefix)ur_upper_arm_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)lift_upper_link" link2="$(arg tf_prefix)ur_wrist_1_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_base_link_inertia" link2="$(arg tf_prefix)ur_shoulder_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_base_link_inertia" link2="$(arg tf_prefix)ur_upper_arm_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_base_link_inertia" link2="$(arg tf_prefix)ur_wrist_1_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_forearm_link" link2="$(arg tf_prefix)ur_upper_arm_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_forearm_link" link2="$(arg tf_prefix)ur_wrist_1_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_shoulder_link" link2="$(arg tf_prefix)ur_upper_arm_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_shoulder_link" link2="$(arg tf_prefix)ur_wrist_1_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_shoulder_link" link2="$(arg tf_prefix)ur_wrist_2_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_wrist_1_link" link2="$(arg tf_prefix)ur_wrist_2_link" reason="Adjacent"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_wrist_1_link" link2="$(arg tf_prefix)ur_wrist_3_link" reason="Never"/>
-    <disable_collisions link1="$(arg tf_prefix)ur_wrist_2_link" link2="$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent"/>
+    <!--VIRTUAL
+    JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame
+    of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="world_joint" type="fixed" parent_frame="world"
+        child_link="$(arg namespace)/$(arg tf_prefix)lift_base_link" />
+    <!--DISABLE
+    COLLISIONS: By default it is assumed that any link of the robot could potentially come into
+    collision with any other link in the robot. This tag disables collision checking between a
+    specified pair of links. -->
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_lower_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_mount_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_plate_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_upper_link" reason="Default" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_lower_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_mount_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_lower_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_plate_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_lower_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_upper_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_lower_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_lower_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_lower_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_upper_arm_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_mount_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_plate_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_mount_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_upper_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_mount_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_mount_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_plate_link"
+        link2="$(arg namespace)/$(arg tf_prefix)lift_upper_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_plate_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_plate_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_plate_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_upper_arm_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_upper_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_upper_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_upper_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_upper_arm_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_upper_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_upper_arm_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_base_link_inertia"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_forearm_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_upper_arm_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_forearm_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_upper_arm_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_shoulder_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent" />
 
 </robot>

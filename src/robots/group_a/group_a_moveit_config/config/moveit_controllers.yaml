@@ -1,36 +1,38 @@
-# MoveIt uses this configuration for controller management
+/**:
+  ros__parameters:
+    # MoveIt uses this configuration for controller management
 
-moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+    moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
 
-moveit_simple_controller_manager:
-  controller_names:
-    - all_controller
-    - lift_controller
-    - ur_controller
+    moveit_simple_controller_manager:
+      controller_names:
+        - all_controller
+        - lift_controller
+        - ur_controller
 
-  all_controller:
-    action_ns: follow_joint_trajectory
-    type: FollowJointTrajectory
-    joints:
-      - lift_lower_joint
-      - ur_shoulder_pan_joint
-      - ur_shoulder_lift_joint
-      - ur_elbow_joint
-      - ur_wrist_1_joint
-      - ur_wrist_2_joint
-      - ur_wrist_3_joint
-  lift_controller:
-    action_ns: follow_joint_trajectory
-    type: FollowJointTrajectory
-    joints:
-      - lift_lower_joint
-  ur_controller:
-    action_ns: follow_joint_trajectory
-    type: FollowJointTrajectory
-    joints:
-      - ur_shoulder_pan_joint
-      - ur_shoulder_lift_joint
-      - ur_elbow_joint
-      - ur_wrist_1_joint
-      - ur_wrist_2_joint
-      - ur_wrist_3_joint
+      all_controller:
+        action_ns: follow_joint_trajectory
+        type: FollowJointTrajectory
+        joints:
+          - $(var namespace)/$(var tf_prefix)lift_lower_joint
+          - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
+          - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
+          - $(var namespace)/$(var tf_prefix)ur_elbow_joint
+          - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
+          - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
+          - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint
+      lift_controller:
+        action_ns: follow_joint_trajectory
+        type: FollowJointTrajectory
+        joints:
+          - $(var namespace)/$(var tf_prefix)lift_lower_joint
+      ur_controller:
+        action_ns: follow_joint_trajectory
+        type: FollowJointTrajectory
+        joints:
+          - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
+          - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
+          - $(var namespace)/$(var tf_prefix)ur_elbow_joint
+          - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
+          - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
+          - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint

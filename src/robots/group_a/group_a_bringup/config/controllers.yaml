@@ -1,4 +1,4 @@
-/**:
+/$(var namespace):
   controller_manager:
     ros__parameters:
       update_rate: 500
@@ -18,7 +18,7 @@
   lift_joint_trajectory_controller:
     ros__parameters:
       joints:
-        - $(var tf_prefix)lift_lower_joint    # ← only joint names need the prefix
+        - $(var namespace)/$(var tf_prefix)lift_lower_joint # ← only joint names need the prefix
       command_interfaces:
         - position
       state_interfaces:
@@ -34,12 +34,12 @@
   ur_joint_trajectory_controller:
     ros__parameters:
       joints:
-        - $(var tf_prefix)ur_shoulder_pan_joint
-        - $(var tf_prefix)ur_shoulder_lift_joint
-        - $(var tf_prefix)ur_elbow_joint
-        - $(var tf_prefix)ur_wrist_1_joint
-        - $(var tf_prefix)ur_wrist_2_joint
-        - $(var tf_prefix)ur_wrist_3_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
+        - $(var namespace)/$(var tf_prefix)ur_elbow_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint
       command_interfaces:
         - position
       state_interfaces:
@@ -55,13 +55,13 @@
   all_joint_trajectory_controller:
     ros__parameters:
       joints:
-        - $(var tf_prefix)lift_lower_joint
-        - $(var tf_prefix)ur_shoulder_pan_joint
-        - $(var tf_prefix)ur_shoulder_lift_joint
-        - $(var tf_prefix)ur_elbow_joint
-        - $(var tf_prefix)ur_wrist_1_joint
-        - $(var tf_prefix)ur_wrist_2_joint
-        - $(var tf_prefix)ur_wrist_3_joint
+        - $(var namespace)/$(var tf_prefix)lift_lower_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
+        - $(var namespace)/$(var tf_prefix)ur_elbow_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint
       command_interfaces:
         - position
       state_interfaces:
