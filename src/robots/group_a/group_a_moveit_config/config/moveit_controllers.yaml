@@ -6,11 +6,11 @@
 
     moveit_simple_controller_manager:
       controller_names:
-        - all_controller
-        - lift_controller
-        - ur_controller
+        - all_joint_trajectory_controller
+        - lift_joint_trajectory_controller
+        - ur_joint_trajectory_controller
 
-      all_controller:
+      all_joint_trajectory_controller:
         action_ns: follow_joint_trajectory
         type: FollowJointTrajectory
         joints:
@@ -21,12 +21,12 @@
           - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
           - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
           - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint
-      lift_controller:
+      lift_joint_trajectory_controller:
         action_ns: follow_joint_trajectory
         type: FollowJointTrajectory
         joints:
           - $(var namespace)/$(var tf_prefix)lift_lower_joint
-      ur_controller:
+      ur_joint_trajectory_controller:
         action_ns: follow_joint_trajectory
         type: FollowJointTrajectory
         joints:

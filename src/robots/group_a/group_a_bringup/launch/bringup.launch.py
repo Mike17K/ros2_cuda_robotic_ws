@@ -126,7 +126,7 @@ def launch_setup(context):
         executable="parameter_bridge",
         name="camera_bridge",
         output="screen",
-        parameters=[{"use_sim_time": True}],
+        parameters=[sim_time_param],
         arguments=["--ros-args", "-p", f"config_file:={gz_bridge_yaml_path}"],
         condition=IfCondition(LaunchConfiguration("sim_gazebo")),
     )
@@ -138,11 +138,27 @@ def launch_setup(context):
         output="screen",
         arguments=[
             "joint_state_broadcaster",
-            "lift_joint_trajectory_controller",
-            "ur_joint_trajectory_controller",
+            "all_joint_trajectory_controller",
             "--controller-manager",
             f"/{namespace}/controller_manager",
+            "--controller-manager-timeout", "30",
         ],
+        parameters=[sim_time_param],
+    )
+
+    motion_default_inactive_controllers_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="screen",
+        arguments=[
+            "lift_joint_trajectory_controller",
+            "ur_joint_trajectory_controller",
+            "--inactive",
+            "--controller-manager",
+            f"/{namespace}/controller_manager",
+            "--controller-manager-timeout", "30",
+        ],
+        parameters=[sim_time_param],
     )
 
     # ── 6. MoveIt move_group ─────────────────────────────────────────────────
@@ -158,6 +174,7 @@ def launch_setup(context):
         parameters=[
             moveit_config,
             moveit_controllers_file_path,
+            sim_time_param,
             {
                 "octomap_frame": "world",
                 "octomap_resolution": 0.05,
@@ -187,6 +204,10 @@ def launch_setup(context):
         TimerAction(
             period=4.0,
             actions=[motion_default_active_controllers_spawner],
+        ),
+        TimerAction(
+            period=4.0,
+            actions=[motion_default_inactive_controllers_spawner],
         ),
     ]
 
