@@ -34,8 +34,7 @@ sudo apt update
 sudo apt install ros-jazzy-ros-gz-sim
 sudo apt install ros-jazzy-ros-gz-bridge
 sudo apt-get install libcanberra-gtk-module libcanberra-gtk3-module
-sudo apt install ros-jazzy-moveit ros-jazzy-geometric-shapes
-sudo apt install ros-jazzy-moveit-ros-perception
+sudo apt install ros-jazzy-moveit ros-jazzy-geometric-shapes ros-jazzy-moveit-ros-perception
 ```
 
 ```bash

@@ -5,7 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded: ~
       Splitter Ratio: 0.5
-    Tree Height: 615
+    Tree Height: 255
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -456,6 +456,39 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: ""
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: ""
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /nvblox_node/static_occupancy
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -483,29 +516,29 @@ Visualization Manager:
       Lock Camera: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.44500020146369934
+      Pitch: 0.6400001049041748
       Point towards: -z axis
       Position:
-        X: 1.3391095399856567
-        Y: 3.3691349029541016
-        Z: 3.4370086193084717
+        X: 1.3589344024658203
+        Y: 1.7562305927276611
+        Z: 2.8047943115234375
       Target Frame: <Fixed Frame>
       Value: FrameAligned (rviz_default_plugins)
-      Yaw: 4.38159704208374
+      Yaw: 4.266594409942627
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1371
+  Height: 1011
   Hide Left Dock: false
   Hide Right Dock: false
   MotionPlanning:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002b4000004fdfc0200000004fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004400fffffffb000000100044006900730070006c006100790073010000003f000002a7000000cc00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000002ec000001a10000019600fffffffb0000000a005600690065007700730100000493000000a9000000a900ffffff00000704000004fd00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000002b400000395fc0200000004fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004400fffffffb000000100044006900730070006c006100790073010000003f0000013f000000cc00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000184000001a10000019600fffffffb0000000a00560069006500770073010000032b000000a9000000a900ffffff000004840000039500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 2494
+  Width: 1854
   X: 66
   Y: 32

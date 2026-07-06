@@ -1,2 +1,3 @@
-- rviz moveit planning request make a planning request
 - connect nvblox to movegroup as collision checks
+- setup cumotion
+- connect cumotion to movegroup for motion planning

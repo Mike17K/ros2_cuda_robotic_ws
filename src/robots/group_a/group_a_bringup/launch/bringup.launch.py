@@ -11,6 +11,7 @@ from moveit_configs_utils import MoveItConfigsBuilder
 from launch_ros.actions import Node
 from launch_param_builder import ParameterBuilder
 
+
 def get_launch_arguments() -> list[DeclareLaunchArgument]:
     args = []
     args.append(DeclareLaunchArgument("use_fake_hardware", default_value="true", description="Use mock_components/GenericSystem (true) or real hardware drivers (false)"))
@@ -24,11 +25,15 @@ def get_launch_arguments() -> list[DeclareLaunchArgument]:
     args.append(DeclareLaunchArgument("tf_prefix", default_value="", description="Prefix for all TF frames after namespace is applied"))
     return args
 
+
 _param_file_refs: list[Any] = []
+
+
 def _make_param_file(path, context):
     pf = ParameterFile(path, allow_substs=True)
     _param_file_refs.append(pf)  # prevent garbage collection / temp-file deletion
     return pf.evaluate(context)
+
 
 def launch_setup(context):
     pkg_description = get_package_share_directory("group_a_description")
@@ -53,7 +58,25 @@ def launch_setup(context):
     sensors_3d_file_path = _make_param_file(os.path.join(pkg_bringup, "config", "sensors_3d.yaml"), context)
     moveit_controllers_file_path = _make_param_file(os.path.join(pkg_moveit, "config", "moveit_controllers.yaml"), context)
 
-    robot_desc = ParameterBuilder("group_a_description").xacro_parameter("robot_description", "urdf/group_a.urdf.xacro", mappings={"parent": parent_link, "xyz": xyz, "rpy": rpy, "lift_type": lift_type, "ur_type": ur_type, "sim_gazebo": sim_gazebo, "use_fake_hardware": use_fake_hardware, "simulation_controllers": str(controllers_file_path), "namespace": namespace}).to_dict()
+    robot_desc = (
+        ParameterBuilder("group_a_description")
+        .xacro_parameter(
+            "robot_description",
+            "urdf/group_a.urdf.xacro",
+            mappings={
+                "parent": parent_link,
+                "xyz": xyz,
+                "rpy": rpy,
+                "lift_type": lift_type,
+                "ur_type": ur_type,
+                "sim_gazebo": sim_gazebo,
+                "use_fake_hardware": use_fake_hardware,
+                "simulation_controllers": str(controllers_file_path),
+                "namespace": namespace,
+            },
+        )
+        .to_dict()
+    )
 
     gz_bridge_yaml_path = _make_param_file(os.path.join(pkg_bringup, "config", "gz_bridge.yaml"), context)
 
@@ -61,7 +84,20 @@ def launch_setup(context):
 
     moveit_config = (
         MoveItConfigsBuilder(namespace, package_name="group_a_moveit_config")
-        .robot_description(file_path=os.path.join(pkg_description, "urdf", "group_a.urdf.xacro"), mappings={"parent": parent_link, "xyz": xyz, "rpy": rpy, "lift_type": lift_type, "ur_type": ur_type, "sim_gazebo": sim_gazebo, "use_fake_hardware": use_fake_hardware, "simulation_controllers": str(controllers_file_path), "namespace": namespace})
+        .robot_description(
+            file_path=os.path.join(pkg_description, "urdf", "group_a.urdf.xacro"),
+            mappings={
+                "parent": parent_link,
+                "xyz": xyz,
+                "rpy": rpy,
+                "lift_type": lift_type,
+                "ur_type": ur_type,
+                "sim_gazebo": sim_gazebo,
+                "use_fake_hardware": use_fake_hardware,
+                "simulation_controllers": str(controllers_file_path),
+                "namespace": namespace,
+            },
+        )
         .robot_description_semantic(file_path=os.path.join(pkg_description, "config", "combined_system.srdf.xacro"), mappings={"namespace": namespace})
         .robot_description_kinematics(os.path.join(pkg_moveit, "config", "kinematics.yaml"))
         .joint_limits(str(joint_limits_file_path))
@@ -75,7 +111,7 @@ def launch_setup(context):
             publish_robot_description_semantic=True,
         )
         .sensors_3d(str(sensors_3d_file_path))
-        .planning_pipelines("ompl",["ompl", "chomp","stomp", "pilz_industrial_motion_planner"])
+        .planning_pipelines("ompl", ["ompl", "chomp", "stomp", "pilz_industrial_motion_planner"])
         .pilz_cartesian_limits(os.path.join(pkg_moveit, "config", "pilz_cartesian_limits.yaml"))
         .to_moveit_configs()
         .to_dict()
@@ -98,7 +134,7 @@ def launch_setup(context):
         executable="ros2_control_node",
         output="screen",
         parameters=[
-            robot_desc, 
+            robot_desc,
             controllers_file_path,
             sim_time_param,
         ],
@@ -121,7 +157,7 @@ def launch_setup(context):
     )
 
     # ── 4. Camera Bridge ─────────────────────────────────────────────────────
-    camera_bridge = Node(
+    gz_default_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
         name="camera_bridge",
@@ -141,7 +177,8 @@ def launch_setup(context):
             "all_joint_trajectory_controller",
             "--controller-manager",
             f"/{namespace}/controller_manager",
-            "--controller-manager-timeout", "30",
+            "--controller-manager-timeout",
+            "30",
         ],
         parameters=[sim_time_param],
     )
@@ -156,7 +193,8 @@ def launch_setup(context):
             "--inactive",
             "--controller-manager",
             f"/{namespace}/controller_manager",
-            "--controller-manager-timeout", "30",
+            "--controller-manager-timeout",
+            "30",
         ],
         parameters=[sim_time_param],
     )
@@ -166,7 +204,7 @@ def launch_setup(context):
     #   - planning_params (dict, scalars only) → overrides any autogen pipeline keys
     #   - sensors_tmp_path (file path string)  → ROS 2 reads list params from file
     #   - octomap scalars dict                 → simple key/value, safe as dict
-    
+
     move_group_node = Node(
         package="moveit_ros_move_group",
         executable="move_group",
@@ -199,7 +237,7 @@ def launch_setup(context):
         robot_state_publisher,
         controller_manager_node,
         gazebo_spawn_robot,
-        camera_bridge,
+        gz_default_bridge,
         move_group_node,
         TimerAction(
             period=4.0,
@@ -210,6 +248,7 @@ def launch_setup(context):
             actions=[motion_default_inactive_controllers_spawner],
         ),
     ]
+
 
 def generate_launch_description():
     return LaunchDescription(

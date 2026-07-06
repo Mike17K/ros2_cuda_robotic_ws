@@ -13,7 +13,7 @@ from nvblox_ros_python_utils.nvblox_constants import NVBLOX_CONTAINER_NAME
 # number of cameras passed to nvblox.
 
 POINTCLOUD_TOPICS = [
-    "/camera_0/pointcloud",
+    "/robot_1/camera/depth/points",
 ]
 
 DEPTH_IMAGE_TOPICS = [
@@ -97,6 +97,7 @@ def add_nvblox(args: lu.ArgumentContainer) -> List[Action]:
         base_config,
         {"num_cameras": num_cameras},
         {"use_lidar": use_lidar},
+        {"use_sim_time": lu.is_true(args.use_sim_time)},
     ]
 
     if args.use_lidar_motion_compensation != "":
@@ -141,12 +142,13 @@ def generate_launch_description() -> LaunchDescription:
     )
     args.add_arg(
         "input_type",
-        "depth_image",
+        "pointcloud",
         description="Input pipeline: depth_image or pointcloud",
     )
     args.add_arg("container_name", NVBLOX_CONTAINER_NAME)
     args.add_arg("run_standalone", "True")
     args.add_arg("use_lidar_motion_compensation", "")
+    args.add_arg("use_sim_time", "True", description="Use simulation clock")
 
     args.add_opaque_function(add_nvblox)
     return LaunchDescription(args.get_launch_actions())

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROS_DOMAIN_ID=55
+ROS_DOMAIN_ID=40
 ROS_DISTRO="jazzy"
 WS=${PWD}
 DEFAULT_DELAY=0.05
@@ -33,7 +33,7 @@ paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_
 
 
 move_right
-paste_cmd "ros2 launch vision nvblox.launch.py robots:=robot_1,robot_2"
+paste_cmd "ros2 launch vision nvblox.launch.py"
 move_right
 # enter
 
