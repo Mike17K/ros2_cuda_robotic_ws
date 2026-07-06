@@ -13,7 +13,7 @@ from nvblox_ros_python_utils.nvblox_constants import NVBLOX_CONTAINER_NAME
 # number of cameras passed to nvblox.
 
 POINTCLOUD_TOPICS = [
-    "/robot_1/camera/depth/points",
+    "/robot_1/camera/depth_registered/points",
 ]
 
 DEPTH_IMAGE_TOPICS = [

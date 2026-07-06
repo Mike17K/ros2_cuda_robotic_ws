@@ -81,7 +81,6 @@ def generate_launch_description():
     for i, robot in enumerate(robots_config):
         robot_stack = GroupAction(
             actions=[
-                PushRosNamespace(robot["name"]),
                 IncludeLaunchDescription(
                     PythonLaunchDescriptionSource(group_a_launch_path),
                     launch_arguments={
