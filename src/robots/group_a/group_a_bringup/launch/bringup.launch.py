@@ -188,7 +188,7 @@ def launch_setup(context):
                 package="depth_image_proc",
                 plugin="depth_image_proc::RegisterNode",
                 name="depth_register_node",
-                parameters=[sim_time_param,{"approximate_sync": True}],
+                parameters=[sim_time_param],
                 namespace=namespace,
                 remappings=[
                     ("depth/image_rect", "camera/depth"),
@@ -203,7 +203,7 @@ def launch_setup(context):
                 package="depth_image_proc",
                 plugin="depth_image_proc::PointCloudXyzrgbNode",
                 name="point_cloud_xyzrgb_node",
-                parameters=[sim_time_param,{"approximate_sync": True}],
+                parameters=[sim_time_param],
                 namespace=namespace,
                 remappings=[
                     ("depth_registered/image_rect", "camera/depth_registered/image_rect"),
