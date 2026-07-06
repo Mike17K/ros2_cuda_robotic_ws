@@ -11,6 +11,9 @@ from moveit_configs_utils import MoveItConfigsBuilder
 from launch_ros.actions import Node
 from launch_param_builder import ParameterBuilder
 
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
 
 def get_launch_arguments() -> list[DeclareLaunchArgument]:
     args = []
@@ -167,20 +170,43 @@ def launch_setup(context):
         condition=IfCondition(LaunchConfiguration("sim_gazebo")),
     )
 
-    # ── 4b. Depth-to-Pointcloud (bypasses buggy Gazebo RGBD pointcloud) ──────
-    depth_to_pointcloud_node = Node(
-        package="depth_image_proc",
-        executable="point_cloud_xyzrgb_node",
-        name="depth_to_pointcloud",
-        output="screen",
-        parameters=[sim_time_param],
-        remappings=[
-            ("depth_registered/image_rect", f"{namespace}/camera/depth/image_raw"),
-            ("rgb/image_rect_color", f"{namespace}/camera/color/image_raw"),
-            ("rgb/camera_info", f"{namespace}/camera/camera_info"),
-            ("points", f"{namespace}/camera/depth/points"),
-        ],
-    )
+    # ── 4b. Depth-to-Pointcloud (Bypasses buggy Gazebo RGBD pointcloud) ──────
+    # depth_to_pointcloud_container = ComposableNodeContainer(
+    #     name="depth_to_pointcloud_container",
+    #     namespace="",
+    #     package="rclcpp_components",
+    #     executable="component_container",
+    #     output="screen",
+    #     composable_node_descriptions=[
+    #         # 1. Ευθυγράμμιση του Raw Depth με την RGB Κάμερα
+    #         ComposableNode(
+    #             package="depth_image_proc",
+    #             plugin="depth_image_proc::RegisterNode",
+    #             name="depth_register_node",
+    #             parameters=[sim_time_param],
+    #             remappings=[
+    #                 ("depth/image_rect", "camera/depth/image_raw"),
+    #                 ("depth/camera_info", "camera/camera_info"),
+    #                 ("rgb/camera_info", "camera/color/camera_info"),
+    #                 ("depth_registered/camera_info", "camera/depth_registered/camera_info"),
+    #                 ("depth_registered/image_rect", "camera/depth_registered/image_rect"),
+    #             ],
+    #         ),
+    #         # 2. Δημιουργία του XYZRGB Point Cloud από τα ευθυγραμμισμένα δεδομένα
+    #         ComposableNode(
+    #             package="depth_image_proc",
+    #             plugin="depth_image_proc::PointCloudXyzrgbNode",
+    #             name="point_cloud_xyzrgb_node",
+    #             parameters=[sim_time_param],
+    #             remappings=[
+    #                 ("depth_registered/image_rect", "camera/depth_registered/image_rect"),
+    #                 ("rgb/image_rect_color", "camera/color/image_raw"),
+    #                 ("rgb/camera_info", "camera/color/camera_info"),
+    #                 ("points", "camera/depth/points"),
+    #             ],
+    #         ),
+    #     ],
+    # )
 
     # ── 5. Controller Spawners ───────────────────────────────────────────────
     motion_default_active_controllers_spawner = Node(
@@ -253,7 +279,7 @@ def launch_setup(context):
         controller_manager_node,
         gazebo_spawn_robot,
         gz_default_bridge,
-        depth_to_pointcloud_node,
+        # depth_to_pointcloud_container,
         move_group_node,
         TimerAction(
             period=4.0,
