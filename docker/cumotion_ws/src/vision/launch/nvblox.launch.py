@@ -17,11 +17,11 @@ POINTCLOUD_TOPICS = [
 ]
 
 DEPTH_IMAGE_TOPICS = [
-    # "/camera_0/depth/image_raw",
+    "/robot_1/camera/depth/image_raw",
 ]
 
 DEPTH_INFO_TOPICS = [
-    # "/camera_0/depth/camera_info",
+    "/robot_1/camera/camera_info",
 ]
 
 # Note: nvblox expects camera topics using indexed names (camera_0, camera_1, etc.)
@@ -54,8 +54,8 @@ def get_depth_image_remappings(
         else:
             remappings.extend(
                 [
-                    (f"{cam}/color/image", "/camera/color/image_raw"),
-                    (f"{cam}/color/camera_info", "/camera/color/camera_info"),
+                    (f"{cam}/color/image", "/robot_1/camera/color/image_raw"),
+                    (f"{cam}/color/camera_info", "/robot_1/camera/camera_info"),
                 ]
             )
 

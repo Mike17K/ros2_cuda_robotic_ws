@@ -167,6 +167,21 @@ def launch_setup(context):
         condition=IfCondition(LaunchConfiguration("sim_gazebo")),
     )
 
+    # ── 4b. Depth-to-Pointcloud (bypasses buggy Gazebo RGBD pointcloud) ──────
+    depth_to_pointcloud_node = Node(
+        package="depth_image_proc",
+        executable="point_cloud_xyzrgb_node",
+        name="depth_to_pointcloud",
+        output="screen",
+        parameters=[sim_time_param],
+        remappings=[
+            ("depth_registered/image_rect", f"{namespace}/camera/depth/image_raw"),
+            ("rgb/image_rect_color", f"{namespace}/camera/color/image_raw"),
+            ("rgb/camera_info", f"{namespace}/camera/camera_info"),
+            ("points", f"{namespace}/camera/depth/points"),
+        ],
+    )
+
     # ── 5. Controller Spawners ───────────────────────────────────────────────
     motion_default_active_controllers_spawner = Node(
         package="controller_manager",
@@ -238,6 +253,7 @@ def launch_setup(context):
         controller_manager_node,
         gazebo_spawn_robot,
         gz_default_bridge,
+        depth_to_pointcloud_node,
         move_group_node,
         TimerAction(
             period=4.0,

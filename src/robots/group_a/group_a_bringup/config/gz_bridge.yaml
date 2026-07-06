@@ -3,28 +3,28 @@
 # ── Orbbec camera ──────────────────────────────────────────────────────────────
 
 - ros_topic_name: "/$(var namespace)/camera/color/image_raw"
-  gz_topic_name: "/$(var namespace)/camera/rgbd/image"
+  gz_topic_name: "/$(var namespace)/camera/color"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "/$(var namespace)/camera/depth/image_raw"
-  gz_topic_name: "/$(var namespace)/camera/rgbd/depth_image"
+  gz_topic_name: "/$(var namespace)/camera/depth"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/$(var namespace)/camera/depth/points"
-  gz_topic_name: "/$(var namespace)/camera/rgbd/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
-  direction: GZ_TO_ROS
-
-- ros_topic_name: "/$(var namespace)/camera/color/camera_info"
-  gz_topic_name: "/$(var namespace)/camera/rgbd/camera_info"
+- ros_topic_name: "/$(var namespace)/camera/camera_info"
+  gz_topic_name: "/$(var namespace)/camera/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
+
+# - ros_topic_name: "/$(var namespace)/camera/depth/camera_info"
+#   gz_topic_name: "/$(var namespace)/camera/depth/camera_info"
+#   ros_type_name: "sensor_msgs/msg/CameraInfo"
+#   gz_type_name: "gz.msgs.CameraInfo"
+#   direction: GZ_TO_ROS
 
 # ── Odometry (from PosePublisher plugin) ───────────────────────────────────────
 
