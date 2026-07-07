@@ -10,7 +10,7 @@
 
       # ── Core settings ─────────────────────────────────────────────────────────
       cuda_stream_type: 1
-      voxel_size: 0.05
+      voxel_size: 0.01
       num_cameras: 1
       use_tf_transforms: true
       # "static_occupancy" | "static_tsdf" 
