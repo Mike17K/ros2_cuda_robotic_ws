@@ -51,7 +51,7 @@
 
       # ── Map clearing ──────────────────────────────────────────────────────────
       # Arm workspace is bounded — clear aggressively around the robot
-      map_clearing_radius_m: 3.0
+      map_clearing_radius_m: 10.0
       map_clearing_frame_id: "world" # fixed frame for static arm
 
       # ── QoS ───────────────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@
         tsdf_decayed_weight_threshold: 0.001
         tsdf_set_free_distance_on_decayed: false
         tsdf_decayed_free_distance_vox: 4.0
-        decay_integrator_deallocate_decayed_blocks: true
+        decay_integrator_deallocate_decayed_blocks: false
 
         # ── Mesh streamer ────────────────────────────────────────────────────────
         layer_streamer_exclusion_height_m: 2.5
