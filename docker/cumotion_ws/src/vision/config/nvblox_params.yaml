@@ -29,6 +29,8 @@
       decay_dynamic_occupancy_rate_hz: 10.0
       clear_map_outside_radius_rate_hz: 1.0
 
+      static_occupancy_publication_rate_hz: 5.0
+
       # ── Console output ────────────────────────────────────────────────────────
       print_rates_to_console: false
       print_timings_to_console: false
