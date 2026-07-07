@@ -16,18 +16,20 @@ def get_depth_image_remappings(
     depth_info_topics: List[str],
     color_topics: List[str],
     color_info_topics: List[str],
+    pose_topics: List[str] = [],
 ) -> List[Tuple[str, str]]:
     """Build remappings using the loaded topic arrays index-by-index."""
     remappings = []
 
-    for i, (depth, depth_info, color, color_info) in enumerate(
-        zip(depth_topics, depth_info_topics, color_topics, color_info_topics)
-    ):
+    for i, (depth, depth_info, color, color_info, pose) in enumerate(zip(depth_topics, depth_info_topics, color_topics, color_info_topics, pose_topics)):
         cam = f"camera_{i}"
-        remappings.extend([
-            (f"{cam}/depth/image", depth),
-            (f"{cam}/depth/camera_info", depth_info)
-        ])
+        remappings.extend(
+            [
+                (f"{cam}/depth/image", depth),
+                (f"{cam}/depth/camera_info", depth_info),
+                (f"pose", pose),
+            ]
+        )
 
         # If people_segmentation mode is active, override with the segmentation pipeline targets
         if mode is NvbloxMode.people_segmentation:
@@ -35,10 +37,12 @@ def get_depth_image_remappings(
         else:
             img_target, info_target = color, color_info
 
-        remappings.extend([
-            (f"{cam}/color/image_raw", img_target),
-            (f"{cam}/color/camera_info", info_target),
-        ])
+        remappings.extend(
+            [
+                (f"{cam}/color/image", img_target),
+                (f"{cam}/color/camera_info", info_target),
+            ]
+        )
 
     return remappings
 
@@ -49,7 +53,7 @@ def add_nvblox(args: lu.ArgumentContainer) -> List[Action]:
 
     mode = NvbloxMode(NvbloxMode[args.mode])
     vision_share = get_package_share_directory("vision")
-    
+
     # ── Parse YAML Topics ─────────────────────────────────────────────────────
     topics_config_path = os.path.join(vision_share, "config", "nvblox_topics.yaml")
     if not os.path.exists(topics_config_path):
@@ -57,21 +61,20 @@ def add_nvblox(args: lu.ArgumentContainer) -> List[Action]:
 
     with open(topics_config_path, "r") as f:
         yaml_data = yaml.safe_load(f)
-        
+
     try:
         params = yaml_data["/**"]["ros__parameters"]
         depth_image_topics = params.get("depth_image_topics", [])
         depth_info_topics = params.get("depth_info_topics", [])
         color_image_topics = params.get("color_image_topics", [])
         color_info_topics = params.get("color_info_topics", [])
+        pose_topics = params.get("pose_topics", [])
     except (KeyError, TypeError):
         raise KeyError("Invalid layout in nvblox_topics.yaml. Must match '/**' -> 'ros__parameters'.")
 
     # ── Configuration & Parameters ────────────────────────────────────────────
     num_cameras = len(depth_image_topics)
-    remappings = get_depth_image_remappings(
-        mode, depth_image_topics, depth_info_topics, color_image_topics, color_info_topics
-    )
+    remappings = get_depth_image_remappings(mode, depth_image_topics, depth_info_topics, color_image_topics, color_info_topics, pose_topics)
 
     parameters = [
         os.path.join(vision_share, "config", "nvblox_params.yaml"),
@@ -96,15 +99,19 @@ def add_nvblox(args: lu.ArgumentContainer) -> List[Action]:
     if lu.is_true(args.run_standalone):
         actions.append(lu.component_container(args.container_name))
 
-    actions.extend([
-        lu.load_composable_nodes(args.container_name, [nvblox_node]),
-        lu.log_info([
-            "Starting explicit nvblox pipeline | ",
-            f"input: '{args.input_type}' | ",
-            f"mode: '{mode}' | ",
-            f"cameras: {num_cameras}",
-        ]),
-    ])
+    actions.extend(
+        [
+            lu.load_composable_nodes(args.container_name, [nvblox_node]),
+            lu.log_info(
+                [
+                    "Starting explicit nvblox pipeline | ",
+                    f"input: '{args.input_type}' | ",
+                    f"mode: '{mode}' | ",
+                    f"cameras: {num_cameras}",
+                ]
+            ),
+        ]
+    )
     return actions
 
 
