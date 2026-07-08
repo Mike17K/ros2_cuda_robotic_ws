@@ -1,5 +1,4 @@
 [global_config]
-  ask_before_closing = never
 [keybindings]
   broadcast_off = <Primary><Shift>h
   broadcast_all = <Primary><Shift>a

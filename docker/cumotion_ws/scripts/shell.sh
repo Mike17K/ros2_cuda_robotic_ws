@@ -33,7 +33,7 @@ fi
 
 # 5. Εκκίνηση του Isaac ROS container
 echo "Εκκίνηση του isaac-ros activate..."
-isaac-ros activate || abort "Αποτυχία εκκίνησης του isaac-ros activate"
+isaac-ros activate --config docker.run.container_name=nvidia_workspace_container || abort "Αποτυχία εκκίνησης του isaac-ros activate"
 
 # Επιστροφή στον αρχικό φάκελο
 cd "$ORIG_DIR"

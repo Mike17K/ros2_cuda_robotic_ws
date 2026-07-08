@@ -9,6 +9,8 @@ sudo rosdep init
 rosdep update
 ```
 
+Optionaly install isaac-sim for the tools generating xrdf and more https://docs.isaacsim.omniverse.nvidia.com/latest/installation/quick-install.html#isaac-sim-quick-install
+
 # Cuda
 
 https://nvidia-isaac-ros.github.io/getting_started/index.html
@@ -113,6 +115,12 @@ fi
 
 sudo apt update && sudo apt-get install -y ros-jazzy-isaac-ros-nvblox
 
+```
+
+make sure you have latest isaac ros cli
+
+```bash
+sudo apt-get update && sudo apt-get upgrade isaac-ros-cli
 ```
 
 # Docker development
