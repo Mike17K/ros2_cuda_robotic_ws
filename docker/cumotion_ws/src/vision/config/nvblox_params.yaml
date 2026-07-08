@@ -57,7 +57,7 @@
       map_clearing_frame_id: "world" # fixed frame for static arm
 
       # ── QoS ───────────────────────────────────────────────────────────────────
-      input_qos: "SYSTEM_DEFAULT"
+      input_qos: "SENSOR_DATA"
 
       # ── Visualization ─────────────────────────────────────────────────────────
       # All visualization frames anchored to world for a fixed arm
@@ -94,7 +94,7 @@
         free_region_occupancy_probability: 0.45
         occupied_region_occupancy_probability: 0.55
         unobserved_region_occupancy_probability: 0.5
-        occupied_region_half_width_m: 0.1
+        occupied_region_half_width_m: 0.04
 
         # ── View calculator ─────────────────────────────────────────────────────
         raycast_subsampling_factor: 4

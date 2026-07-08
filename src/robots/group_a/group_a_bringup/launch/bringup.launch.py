@@ -58,7 +58,7 @@ def launch_setup(context):
     # if we don't keep the instance, it will be garbage collected and the tmp file will be deleted before the node can read it
     joint_limits_file_path = _make_param_file(os.path.join(pkg_moveit, "config", "joint_limits.yaml"), context)
     controllers_file_path = _make_param_file(os.path.join(pkg_bringup, "config", "controllers.yaml"), context)
-    sensors_3d_file_path = _make_param_file(os.path.join(pkg_bringup, "config", "sensors_3d.yaml"), context)
+    # sensors_3d_file_path = _make_param_file(os.path.join(pkg_bringup, "config", "sensors_3d.yaml"), context)
     moveit_controllers_file_path = _make_param_file(os.path.join(pkg_moveit, "config", "moveit_controllers.yaml"), context)
 
     robot_desc = (
@@ -113,7 +113,7 @@ def launch_setup(context):
             publish_robot_description=True,
             publish_robot_description_semantic=True,
         )
-        .sensors_3d(str(sensors_3d_file_path))
+        # .sensors_3d(str(sensors_3d_file_path))
         .planning_pipelines("ompl", ["ompl", "chomp", "stomp", "pilz_industrial_motion_planner"])
         .pilz_cartesian_limits(os.path.join(pkg_moveit, "config", "pilz_cartesian_limits.yaml"))
         .to_moveit_configs()

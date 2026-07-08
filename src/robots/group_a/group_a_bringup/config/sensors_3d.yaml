@@ -3,7 +3,7 @@ sensors:
 
 pointcloud_sensor:
   sensor_plugin: occupancy_map_monitor/PointCloudOctomapUpdater
-  point_cloud_topic: /nvblox_node/static_occupancy
+  point_cloud_topic: /nvblox_node/occupancy_layer
   max_range: 3.0
   point_subsample: 1
   padding_offset: 0.05
