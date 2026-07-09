@@ -1,0 +1,42 @@
+/**:
+  cumotion_action_server:
+    ros__parameters:
+      # These two files are handled dynamically at runtime via the launch file
+      # urdf_file_path: ""
+      # xrdf_file_path: ""
+
+      # Trajectory Sampling Settings
+      time_dilation_factor: 0.5
+      interpolation_dt: 0.025
+      override_moveit_scaling_factors: false
+
+      # World Map & Perception Queries (nvblox integration)
+      read_esdf_world: false
+      update_esdf_on_request: true
+      esdf_service_name: "/nvblox_node/get_esdf_and_gradient"
+
+      # Debugging & Spheres Visualizations
+      publish_world_collision_spheres: true
+      publish_self_collision_spheres: false
+      publish_cumotion_world_as_voxels: false
+      publish_voxel_size: 0.05
+      max_publish_voxels: 500000
+      enable_cumotion_debug_mode: false
+
+      # Ground Plane Collisions Boundaries
+      add_ground_plane: false
+      ground_plane_size_x: 2.0
+      ground_plane_size_y: 2.0
+      ground_plane_thickness: 0.1
+      ground_plane_z_offset: -0.05
+
+      # System Interfaces
+      joint_states_topic: "/joint_states"
+      static_planning_scene_service_name: "publish_static_planning_scene"
+      static_scene_service_max_wait_attempts: 30
+
+      # CUDA Optimizations
+      enable_cuda_mps: false
+      cuda_mps_pipe_directory: "/workspaces/isaac_ros-dev/ros_ws/mps_pipe_dir"
+      cuda_mps_client_priority: 0
+      cuda_mps_active_thread_percentage: 100

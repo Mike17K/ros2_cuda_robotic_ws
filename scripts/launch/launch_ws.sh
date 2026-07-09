@@ -33,7 +33,7 @@ paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_
 
 
 move_right
-paste_cmd "ros2 launch vision nvblox.launch.py"
+paste_cmd "bash docker/cumotion_ws/scripts/shell.sh"
 move_right
 # enter
 

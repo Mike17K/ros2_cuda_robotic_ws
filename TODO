@@ -1,2 +1,4 @@
 - setup cumotion
 - connect cumotion to movegroup for motion planning
+
+- maybe do the ewellix and ur not as submodules but as apt installed packages , also in the docker container in setup_workspace.sh

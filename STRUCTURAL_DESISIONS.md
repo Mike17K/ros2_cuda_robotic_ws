@@ -5,3 +5,9 @@ because we want to use nvblox for environment representation, by operating it in
 We result in having ompl planners only for small helper plans , without inspection of collisions ( will be used only for testing and rearly ) and cumotion with nvblox for the main planning and execution.
 
 this is why the sensors_3d.yaml file is commented out in the bringup.launch.py file, because we do not want to use the octomap for the planning scene.
+
+# access to robots from isaac container
+
+because the isaac-ros-cli mounts the folder docker/cumotion_ws in the container as we have specified
+in order to have there the packages of robot description for the cumotion to access them we will create an symbolic link from the src/robots to the docker/cumotion_ws/src/robots
+that will be persistant from git

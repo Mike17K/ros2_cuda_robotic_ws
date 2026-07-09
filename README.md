@@ -10,6 +10,7 @@ rosdep update
 ```
 
 Optionaly install isaac-sim for the tools generating xrdf and more https://docs.isaacsim.omniverse.nvidia.com/latest/installation/quick-install.html#isaac-sim-quick-install
+https://docs.isaacsim.omniverse.nvidia.com/6.0.1/robot_setup_tutorials/tutorial_generate_robot_config.html
 
 # Cuda
 
