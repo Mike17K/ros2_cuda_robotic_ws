@@ -11,3 +11,5 @@ this is why the sensors_3d.yaml file is commented out in the bringup.launch.py f
 because the isaac-ros-cli mounts the folder docker/cumotion_ws in the container as we have specified
 in order to have there the packages of robot description for the cumotion to access them we will create an symbolic link from the src/robots to the docker/cumotion_ws/src/robots
 that will be persistant from git
+
+update: this approach does not work in the container cause of bad context, we will use volumns for mapping the files to the container. Because the isaac ros cli is not supporting of custom volumns we have opend an issue in their github for maybe adding this functionality
