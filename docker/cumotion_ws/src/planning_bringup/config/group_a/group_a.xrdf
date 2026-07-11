@@ -3,79 +3,79 @@ format_version: 1.0
 
 modifiers:
   # The global or parent anchor for the whole moving system
-  - set_base_frame: "{namespace}/{tf_prefix}lift_base_link"
+  - set_base_frame: "$(var namespace)/$(var tf_prefix)lift_base_link"
 
 default_joint_positions:
-  {namespace}/{tf_prefix}lift_lower_joint: 0.0
-  {namespace}/{tf_prefix}ur_shoulder_pan_joint: 0.0
-  {namespace}/{tf_prefix}ur_shoulder_lift_joint: -2.2
-  {namespace}/{tf_prefix}ur_elbow_joint: 1.9
-  {namespace}/{tf_prefix}ur_wrist_1_joint: -1.383
-  {namespace}/{tf_prefix}ur_wrist_2_joint: -1.57
-  {namespace}/{tf_prefix}ur_wrist_3_joint: 0.0
+  $(var namespace)/$(var tf_prefix)lift_lower_joint: 0.0
+  $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint: 0.0
+  $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint: -2.2
+  $(var namespace)/$(var tf_prefix)ur_elbow_joint: 1.9
+  $(var namespace)/$(var tf_prefix)ur_wrist_1_joint: -1.383
+  $(var namespace)/$(var tf_prefix)ur_wrist_2_joint: -1.57
+  $(var namespace)/$(var tf_prefix)ur_wrist_3_joint: 0.0
 
 cspace:
   joint_names:
-    - "{namespace}/{tf_prefix}lift_lower_joint"
-    - "{namespace}/{tf_prefix}ur_shoulder_pan_joint"
-    - "{namespace}/{tf_prefix}ur_shoulder_lift_joint"
-    - "{namespace}/{tf_prefix}ur_elbow_joint"
-    - "{namespace}/{tf_prefix}ur_wrist_1_joint"
-    - "{namespace}/{tf_prefix}ur_wrist_2_joint"
-    - "{namespace}/{tf_prefix}ur_wrist_3_joint"
+    - "$(var namespace)/$(var tf_prefix)lift_lower_joint"
+    - "$(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint"
+    - "$(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint"
+    - "$(var namespace)/$(var tf_prefix)ur_elbow_joint"
+    - "$(var namespace)/$(var tf_prefix)ur_wrist_1_joint"
+    - "$(var namespace)/$(var tf_prefix)ur_wrist_2_joint"
+    - "$(var namespace)/$(var tf_prefix)ur_wrist_3_joint"
   # Added a typical conservative limit for the linear lift axis alongside the UR joints
   acceleration_limits: [2.0, 12.0, 12.0, 12.0, 12.0, 12.0, 12.0]
   jerk_limits: [50.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0]
 
-tool_frames: ["{namespace}/{tf_prefix}ur_tool0"]
+tool_frames: ["$(var namespace)/$(var tf_prefix)ur_tool0"]
 
 collision:
   geometry: "combined_robot_collision_spheres"
   buffer_distance:
-    {namespace}/{tf_prefix}lift_lower_link: 0.02
-    {namespace}/{tf_prefix}lift_upper_link: 0.02
-    {namespace}/{tf_prefix}ur_shoulder_link: 0.01
-    {namespace}/{tf_prefix}ur_upper_arm_link: 0.01
-    {namespace}/{tf_prefix}ur_forearm_link: 0.01
-    {namespace}/{tf_prefix}ur_wrist_1_link: 0.01
-    {namespace}/{tf_prefix}ur_wrist_2_link: 0.01
-    {namespace}/{tf_prefix}ur_wrist_3_link: 0.01
-    {namespace}/{tf_prefix}ur_tool0: 0.01
-    {namespace}/{tf_prefix}camera_link: 0.01
+    $(var namespace)/$(var tf_prefix)lift_lower_link: 0.02
+    $(var namespace)/$(var tf_prefix)lift_upper_link: 0.02
+    $(var namespace)/$(var tf_prefix)ur_shoulder_link: 0.01
+    $(var namespace)/$(var tf_prefix)ur_upper_arm_link: 0.01
+    $(var namespace)/$(var tf_prefix)ur_forearm_link: 0.01
+    $(var namespace)/$(var tf_prefix)ur_wrist_1_link: 0.01
+    $(var namespace)/$(var tf_prefix)ur_wrist_2_link: 0.01
+    $(var namespace)/$(var tf_prefix)ur_wrist_3_link: 0.01
+    $(var namespace)/$(var tf_prefix)ur_tool0: 0.01
+    $(var namespace)/$(var tf_prefix)camera_link: 0.01
 
 self_collision:
   geometry: "combined_robot_collision_spheres"
   buffer_distance:
-    {namespace}/{tf_prefix}ur_shoulder_link: 0.07
-    {namespace}/{tf_prefix}ur_tool0: 0.05
+    $(var namespace)/$(var tf_prefix)ur_shoulder_link: 0.07
+    $(var namespace)/$(var tf_prefix)ur_tool0: 0.05
   ignore:
     # Allow the base components of the lift to ignore adjacent static parts if required
-    {namespace}/{tf_prefix}lift_lower_link: ["{namespace}/{tf_prefix}lift_upper_link"]
-    {namespace}/{tf_prefix}lift_upper_link: ["{namespace}/{tf_prefix}ur_shoulder_link"]
+    $(var namespace)/$(var tf_prefix)lift_lower_link: ["$(var namespace)/$(var tf_prefix)lift_upper_link"]
+    $(var namespace)/$(var tf_prefix)lift_upper_link: ["$(var namespace)/$(var tf_prefix)ur_shoulder_link"]
     # Standard UR arm internal ignores
-    {namespace}/{tf_prefix}ur_upper_arm_link: ["{namespace}/{tf_prefix}ur_forearm_link", "{namespace}/{tf_prefix}ur_shoulder_link"]
-    {namespace}/{tf_prefix}ur_forearm_link: ["{namespace}/{tf_prefix}ur_wrist_1_link"]
-    {namespace}/{tf_prefix}ur_wrist_1_link: ["{namespace}/{tf_prefix}ur_wrist_2_link", "{namespace}/{tf_prefix}ur_wrist_3_link"]
-    {namespace}/{tf_prefix}ur_wrist_2_link: ["{namespace}/{tf_prefix}ur_wrist_3_link", "{namespace}/{tf_prefix}ur_tool0"]
-    {namespace}/{tf_prefix}ur_wrist_3_link: ["{namespace}/{tf_prefix}ur_tool0"]
-    {namespace}/{tf_prefix}camera_link: ["{namespace}/{tf_prefix}ur_tool0", "{namespace}/{tf_prefix}ur_wrist_3_link"]
+    $(var namespace)/$(var tf_prefix)ur_upper_arm_link: ["$(var namespace)/$(var tf_prefix)ur_forearm_link", "$(var namespace)/$(var tf_prefix)ur_shoulder_link"]
+    $(var namespace)/$(var tf_prefix)ur_forearm_link: ["$(var namespace)/$(var tf_prefix)ur_wrist_1_link"]
+    $(var namespace)/$(var tf_prefix)ur_wrist_1_link: ["$(var namespace)/$(var tf_prefix)ur_wrist_2_link", "$(var namespace)/$(var tf_prefix)ur_wrist_3_link"]
+    $(var namespace)/$(var tf_prefix)ur_wrist_2_link: ["$(var namespace)/$(var tf_prefix)ur_wrist_3_link", "$(var namespace)/$(var tf_prefix)ur_tool0"]
+    $(var namespace)/$(var tf_prefix)ur_wrist_3_link: ["$(var namespace)/$(var tf_prefix)ur_tool0"]
+    $(var namespace)/$(var tf_prefix)camera_link: ["$(var namespace)/$(var tf_prefix)ur_tool0", "$(var namespace)/$(var tf_prefix)ur_wrist_3_link"]
 
 geometry:
   combined_robot_collision_spheres:
     spheres:
       # Placeholder sphere geometry for the Ewellix telescoping columns 
       # (Adjust centers/radii according to your specific model sizing if needed)
-      {namespace}/{tf_prefix}lift_lower_link:
+      $(var namespace)/$(var tf_prefix)lift_lower_link:
         - center: [0, 0, 0.3]
           radius: 0.15
-      {namespace}/{tf_prefix}lift_upper_link:
+      $(var namespace)/$(var tf_prefix)lift_upper_link:
         - center: [0, 0, 0.3]
           radius: 0.13
       # UR Arm Spheres
-      {namespace}/{tf_prefix}ur_shoulder_link:
+      $(var namespace)/$(var tf_prefix)ur_shoulder_link:
         - center: [0, 0, 0]
           radius: 0.05
-      {namespace}/{tf_prefix}ur_upper_arm_link:
+      $(var namespace)/$(var tf_prefix)ur_upper_arm_link:
         - center: [-0, -0, 0.18]
           radius: 0.09
         - center: [-0.102167, 0,  0.18]
@@ -90,7 +90,7 @@ geometry:
           radius: 0.05
         - center: [-0.613, 0, 0.18]
           radius: 0.07
-      {namespace}/{tf_prefix}ur_forearm_link:
+      $(var namespace)/$(var tf_prefix)ur_forearm_link:
         - center: [-0, 0, 0.03]
           radius: 0.05
         - center: [-0.0951667, 0, 0.03]
@@ -105,20 +105,20 @@ geometry:
           radius: 0.05
         - center: [-0.571, -1.19904e-17, 0.03]
           radius: 0.05
-      {namespace}/{tf_prefix}ur_wrist_1_link:
+      $(var namespace)/$(var tf_prefix)ur_wrist_1_link:
         - center: [0, 0, 0]
           radius: 0.05
-      {namespace}/{tf_prefix}ur_wrist_2_link:
+      $(var namespace)/$(var tf_prefix)ur_wrist_2_link:
         - center: [0, 0, 0]
           radius: 0.05
-      {namespace}/{tf_prefix}ur_wrist_3_link:
+      $(var namespace)/$(var tf_prefix)ur_wrist_3_link:
         - center: [0, 0, 0]
           radius: 0.05
         - center: [0, 0, 0.06]
           radius: 0.07
-      {namespace}/{tf_prefix}ur_tool0:
+      $(var namespace)/$(var tf_prefix)ur_tool0:
         - center: [0, 0, 0.12]
-          radius: -0.01
-      {namespace}/{tf_prefix}camera_link:
+          radius: 0.01
+      $(var namespace)/$(var tf_prefix)camera_link:
         - center: [0, 0.11, -0.01]
           radius: 0.06

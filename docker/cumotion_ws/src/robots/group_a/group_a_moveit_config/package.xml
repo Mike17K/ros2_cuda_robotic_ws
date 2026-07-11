@@ -3,9 +3,8 @@
 <package format="3">
   <name>group_a_moveit_config</name>
   <version>0.3.0</version>
-  <description>
-     An automatically generated package with all the configuration and launch files for using the combined_system with the MoveIt Motion Planning Framework
-  </description>
+  <description> An automatically generated package with all the configuration and launch files for
+    using the combined_system with the MoveIt Motion Planning Framework </description>
   <maintainer email="kaipismike1@gmail.com">Mike Kaipis</maintainer>
 
   <license>BSD-3-Clause</license>
@@ -45,8 +44,9 @@
   <exec_depend>warehouse_ros_mongo</exec_depend>
   <exec_depend>xacro</exec_depend>
 
+  <exec_depend>isaac_ros_cumotion_moveit</exec_depend>
 
   <export>
-      <build_type>ament_cmake</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

@@ -6,10 +6,6 @@ We result in having ompl planners only for small helper plans , without inspecti
 
 this is why the sensors_3d.yaml file is commented out in the bringup.launch.py file, because we do not want to use the octomap for the planning scene.
 
-# access to robots from isaac container
+# main working workspace goes for the total operation inside the docker ws
 
-because the isaac-ros-cli mounts the folder docker/cumotion_ws in the container as we have specified
-in order to have there the packages of robot description for the cumotion to access them we will create an symbolic link from the src/robots to the docker/cumotion_ws/src/robots
-that will be persistant from git
-
-update: this approach does not work in the container cause of bad context, we will use volumns for mapping the files to the container. Because the isaac ros cli is not supporting of custom volumns we have opend an issue in their github for maybe adding this functionality
+because the rviz planning needs the cumotion moveit plugin, and also cumotion needs robot description files, instead of having duplicate packages for robots descriptions and moveit config its more optimal to be on the same docker workspace. now the catch if the gz sim for some reason does not work there i should be launching the workcell gz sim from the src and the rest of bringup seperate from the container to be spawned ( so not posible all in one launch but ok )

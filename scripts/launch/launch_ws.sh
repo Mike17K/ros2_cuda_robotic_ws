@@ -28,17 +28,37 @@ broadcast_off
 
 # --- PANEL 1 (Πάνω): Camera Input Node ---
 echo "Configuring Panel 1..."
-paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false'
+paste_cmd "bash docker/cumotion_ws/scripts/shell.sh" && enter
+sleep 5
+# paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false'
 # enter
 
 
 move_right
-paste_cmd "bash docker/cumotion_ws/scripts/shell.sh"
-move_right
+paste_cmd "bash docker/cumotion_ws/scripts/shell.sh" && enter
 # enter
 
 move_down
-paste_cmd "ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1"
+paste_cmd "bash docker/cumotion_ws/scripts/shell.sh" && enter
+# paste_cmd "ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1"
 
 move_left
-paste_cmd "ros2 run tf2_ros static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 1.0 map group_a/odom"
+paste_cmd "bash docker/cumotion_ws/scripts/shell.sh" && enter
+# paste_cmd "ros2 run tf2_ros static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 1.0 map group_a/odom"
+
+
+# configuration broadcasting
+echo "Enabling broadcasting for all panels..."
+broadcast_on
+paste_cmd "$GLOBAL_CMD && clear" 
+enter
+broadcast_off
+
+move_up
+paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false'
+
+move_right
+paste_cmd 'ros2 launch planning_bringup cumotion.launch.py'
+
+move_down
+paste_cmd 'ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1'

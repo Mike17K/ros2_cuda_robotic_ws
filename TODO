@@ -1,4 +1,6 @@
-- setup cumotion
-- connect cumotion to movegroup for motion planning
+- restructure the structure of the workspace , move everything to the docker/cumotion_ws/src to avoid duplicate packages
+- TODO remove from src the packages that are now in docker/cumotion_ws/src
+
+- move with cumotion planner
 
 - maybe do the ewellix and ur not as submodules but as apt installed packages , also in the docker container in setup_workspace.sh

@@ -1,9 +1,6 @@
-[submodule "src/robots/ur_description"]
-	path = src/robots/ur_description
-	url = https://github.com/UniversalRobots/Universal_Robots_ROS2_Description.git
-[submodule "src/robots/ewellix_lift"]
-	path = src/robots/ewellix_lift
-	url = https://github.com/clearpathrobotics/ewellix_lift_common.git
 [submodule "docker/cumotion_ws/src/isaac_ros_cumotion"]
 	path = docker/cumotion_ws/src/isaac_ros_cumotion
 	url = https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_cumotion.git
+[submodule "docker/cumotion_ws/src/robots/ewellix_lift"]
+	path = docker/cumotion_ws/src/robots/ewellix_lift
+	url = https://github.com/clearpathrobotics/ewellix_lift_common.git

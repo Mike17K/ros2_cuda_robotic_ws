@@ -18,6 +18,7 @@ https://nvidia-isaac-ros.github.io/getting_started/index.html
 https://nvlabs.github.io/curobo/latest/getting-started/installation.html
 https://nvidia-isaac.github.io/nvblox/v0.0.10/index.html
 https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_nvblox/isaac_ros_nvblox/index.html#quickstart
+https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion/index.html
 
 CUDA 13
 
