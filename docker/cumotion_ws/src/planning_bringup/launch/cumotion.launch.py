@@ -128,7 +128,9 @@ def launch_setup(context, launch_configs):
         parameters=[{
             'moveit_collision_objects_scene_file':
                 launch_configs['moveit_collision_objects_scene_file']
-        }],
+        },
+        {"use_sim_time": True if sim_gazebo == "true" else False}
+        ],
     )
 
     cumotion_planner_node = ComposableNode(
@@ -137,7 +139,8 @@ def launch_setup(context, launch_configs):
         plugin='nvidia::isaac_ros::cumotion::CumotionPlanner',
         namespace=namespace,
         parameters=[
-            launch_configs
+            launch_configs,
+            {"use_sim_time": True if sim_gazebo == "true" else False}
         ],
     )
 

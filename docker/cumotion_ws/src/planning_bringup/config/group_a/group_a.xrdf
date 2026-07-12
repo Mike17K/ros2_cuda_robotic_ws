@@ -67,7 +67,7 @@ geometry:
       # (Adjust centers/radii according to your specific model sizing if needed)
       $(var namespace)/$(var tf_prefix)lift_lower_link:
         - center: [0, 0, 0.3]
-          radius: 0.15
+          radius: 0.1
       $(var namespace)/$(var tf_prefix)lift_upper_link:
         - center: [0, 0, 0.3]
           radius: 0.13
