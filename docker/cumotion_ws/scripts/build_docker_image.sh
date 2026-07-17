@@ -20,7 +20,7 @@ echo "Το ISAAC_ROS_WS ορίστηκε στο: $ISAAC_ROS_WS"
 export ISAAC_ROS_CONFIG_DIR="$ISAAC_ROS_WS/.isaac-ros"
 echo "Το ISAAC_ROS_CONFIG_DIR ορίστηκε στο: $ISAAC_ROS_CONFIG_DIR"
 
-export DOCKER_ARGS_FILE="$ISAAC_ROS_CONFIG_DIR/isaac_ros_dev-dockerargs"
+export DOCKER_ARGS_FILE="$ISAAC_ROS_WS/.isaac-ros/isaac_ros_dev-dockerargs"
 
 # 1. Έλεγχος αν υπάρχει το NVIDIA Container Toolkit
 if ! command -v nvidia-ctk &> /dev/null; then
@@ -34,8 +34,8 @@ if [ -z "$ISAAC_ROS_PATH" ]; then
 fi
 
 # 5. Εκκίνηση του Isaac ROS container
-echo "Εκκίνηση του isaac-ros activate..."
-isaac-ros activate --config docker.run.container_name=nvidia_workspace_container || abort "Αποτυχία εκκίνησης του isaac-ros activate"
+echo "Εκκίνηση του isaac-ros activate --build-local..."
+isaac-ros activate --build-local|| abort "Αποτυχία εκκίνησης του isaac-ros activate --build-local"
 
 # Επιστροφή στον αρχικό φάκελο
 cd "$ORIG_DIR"

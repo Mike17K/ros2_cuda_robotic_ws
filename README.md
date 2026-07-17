@@ -2,6 +2,8 @@
 
 # Setup
 
+export ISAAC_ROS_WS=~/Desktop/projects/robotics/ros2_cuda_robotic_ws/docker/cumotion_ws
+
 ```
 sudo apt update
 sudo apt install python3-rosdep
@@ -11,6 +13,8 @@ rosdep update
 
 Optionaly install isaac-sim for the tools generating xrdf and more https://docs.isaacsim.omniverse.nvidia.com/latest/installation/quick-install.html#isaac-sim-quick-install
 https://docs.isaacsim.omniverse.nvidia.com/6.0.1/robot_setup_tutorials/tutorial_generate_robot_config.html
+
+https://nvidia-isaac-ros.github.io/concepts/dev_env/index.html
 
 # Cuda
 
