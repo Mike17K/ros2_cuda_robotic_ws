@@ -144,3 +144,5 @@ launch the container
 run_dev.sh
 
 the usaac ros common should be on 3.2-15 release
+
+https://direnv.net/
