@@ -1,0 +1,17 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=jazzy
+ENV ROS_ROOT=/opt/ros/${ROS_DISTRO}
+
+WORKDIR /workspaces/isaac_ros-dev
+
+# Install prebuilt packages
+COPY . /workspaces/isaac_ros-dev
+RUN find /workspaces/isaac_ros-dev -maxdepth 2
+RUN chmod +x /workspaces/isaac_ros-dev/scripts/setup_workspace.sh
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    apt-get update \
+    && bash /workspaces/isaac_ros-dev/scripts/setup_workspace.sh
