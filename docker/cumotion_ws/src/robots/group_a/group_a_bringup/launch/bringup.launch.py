@@ -52,6 +52,7 @@ def launch_setup(context):
     xyz = LaunchConfiguration("xyz").perform(context)
     rpy = LaunchConfiguration("rpy").perform(context)
     namespace = LaunchConfiguration("namespace").perform(context)
+    tf_prefix = LaunchConfiguration("tf_prefix").perform(context)
 
     # ── Controllers YAML (namespace-substituted) ─────────────────────────────────
     # DUBUGGING TIP! we need to keep the parameter file in an instance! it creates the tmp file when we call evaluate() on it
@@ -158,6 +159,8 @@ def launch_setup(context):
             "robot_description",
             "-name",
             namespace,
+            "-J",
+            f"{namespace}/{tf_prefix}lift_lower_joint 0.001",
         ],
         condition=IfCondition(LaunchConfiguration("sim_gazebo")),
     )

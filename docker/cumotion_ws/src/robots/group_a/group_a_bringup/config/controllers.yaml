@@ -17,6 +17,7 @@
 
   lift_joint_trajectory_controller:
     ros__parameters:
+      allow_nonzero_velocity_at_trajectory_end: true
       joints:
         - $(var namespace)/$(var tf_prefix)lift_lower_joint # ← only joint names need the prefix
       command_interfaces:
@@ -33,6 +34,7 @@
 
   ur_joint_trajectory_controller:
     ros__parameters:
+      allow_nonzero_velocity_at_trajectory_end: true
       joints:
         - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
         - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
@@ -54,6 +56,7 @@
 
   all_joint_trajectory_controller:
     ros__parameters:
+      allow_nonzero_velocity_at_trajectory_end: true
       joints:
         - $(var namespace)/$(var tf_prefix)lift_lower_joint
         - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
