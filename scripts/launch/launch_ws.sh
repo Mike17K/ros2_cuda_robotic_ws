@@ -55,10 +55,13 @@ enter
 broadcast_off
 
 move_up
-paste_cmd 'ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false'
+paste_cmd 'source install/setup.bash && ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false'
 
 move_right
-paste_cmd 'ros2 launch planning_bringup cumotion.launch.py'
+paste_cmd 'source install/setup.bash && ros2 launch planning_bringup cumotion.launch.py'
 
 move_down
-paste_cmd 'ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1'
+paste_cmd 'source install/setup.bash && ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1'
+
+move_left
+paste_cmd 'source install/setup.bash && ros2 launch vision nvblox.launch.py'
