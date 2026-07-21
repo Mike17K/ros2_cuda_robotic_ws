@@ -1,148 +1,65 @@
 <img src="docs/shared_nvblox.png">
 
-# Setup
+# Diffusion Robot Test Workspace
 
-export ISAAC_ROS_WS=~/Desktop/projects/robotics/ros2_cuda_robotic_ws/docker/cumotion_ws
+ROS 2 (Jazzy) workspace for multi-arm manipulation on lift-mounted UR arms ("group_a": Ewellix lift + UR arm + Orbbec camera), planned with [Isaac ROS cuMotion](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion/index.html) against a shared [nvblox](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_nvblox/isaac_ros_nvblox/index.html) reconstruction, simulated in Gazebo. Longer-term goal is a diffusion-policy planner — see [docs/DIFFUSION_MODEL_IDEA.md](docs/DIFFUSION_MODEL_IDEA.md).
 
-```
-sudo apt update
-sudo apt install python3-rosdep
-sudo rosdep init
-rosdep update
-```
+All development happens inside a container built via the [Isaac ROS CLI](https://nvidia-isaac-ros.github.io/concepts/dev_env/index.html) — there is no host ROS install. Design rationale (why nvblox runs in static TSDF mode, why the workspace lives inside the container) is in [docs/STRUCTURAL_DESISIONS.md](docs/STRUCTURAL_DESISIONS.md).
 
-Optionaly install isaac-sim for the tools generating xrdf and more https://docs.isaacsim.omniverse.nvidia.com/latest/installation/quick-install.html#isaac-sim-quick-install
-https://docs.isaacsim.omniverse.nvidia.com/6.0.1/robot_setup_tutorials/tutorial_generate_robot_config.html
+## Layout
 
-https://nvidia-isaac-ros.github.io/concepts/dev_env/index.html
+| Path | What |
+|---|---|
+| `src/workcell` | Gazebo world + shared workcell description |
+| `src/robots/group_a` | Robot description + MoveIt config for group_a |
+| `src/planning_bringup` | cuMotion planning launch/config |
+| `src/vision` | nvblox launch/config |
+| `src/isaac_ros_cumotion_fork` | Submodule, [Mike17K/isaac_ros_cumotion](https://github.com/Mike17K/isaac_ros_cumotion) |
+| `Dockerfile.cumotion_ws` | Layer added on top of the Isaac ROS base image |
+| `scripts/` | Entry points, see below |
 
-# Cuda
+## Prerequisites (host)
 
-https://nvidia-isaac-ros.github.io/getting_started/index.html
-https://nvlabs.github.io/curobo/latest/getting-started/installation.html
-https://nvidia-isaac.github.io/nvblox/v0.0.10/index.html
-https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_nvblox/isaac_ros_nvblox/index.html#quickstart
-https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion/index.html
+- [NVIDIA Container Toolkit](https://nvidia-isaac-ros.github.io/getting_started/index.html) + `isaac-ros-cli` — see `scripts/setup_host.sh`
+- `docker login nvcr.io` with an [NGC API key](https://org.ngc.nvidia.com/account/api-keys) (username: `$oauthtoken`)
+- `isaac_ros_common` pinned to the `3.2-15` release
 
-CUDA 13
+## Entry points (`scripts/`)
 
-```bash
-sudo apt install nvidia-driver-580
-sudo reboot
+| Script | Purpose |
+|---|---|
+| `build_docker_image.sh` | Builds/activates the container (`isaac-ros activate --build-local`) |
+| `shell.sh` | Opens a shell in the running container |
+| `entrypoint.sh` | Container entrypoint, runs `make` |
+| `setup_workspace.sh` | First-boot dependency install inside the container |
+| `setup_host.sh` | One-off host setup (NVIDIA container toolkit + isaac-ros-cli) |
+| `launch/launch_ws.sh` | Opens a Terminator layout and launches workcell / cuMotion / RViz / nvblox panels |
 
-# Προσθήκη του NVIDIA CUDA repository
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
-sudo dpkg -i cuda-keyring_1.1-1_all.deb
-sudo apt update
-sudo apt install nvidia-cuda-toolkit
-
-sudo apt update
-sudo apt install ros-jazzy-actuator-msgs
-sudo apt update
-sudo apt install ros-jazzy-ros-gz-sim
-sudo apt install ros-jazzy-ros-gz-bridge
-sudo apt-get install libcanberra-gtk-module libcanberra-gtk3-module
-sudo apt install ros-jazzy-moveit ros-jazzy-geometric-shapes ros-jazzy-moveit-ros-perception
-```
+## Build & run (inside the container)
 
 ```bash
-gz fuel download -u "https://fuel.gazebosim.org/1.0/OpenRobotics/models/office desk"
-gz fuel download -u "https://fuel.gazebosim.org/1.0/OpenRobotics/models/bed"
-gz fuel download -u "https://fuel.gazebosim.org/1.0/OpenRobotics/models/office chair"
+make            # colcon build
+make rosdeps    # install rosdep dependencies
+make builds n=<package>   # build a single package
 ```
 
-# Build
+Then, e.g.:
 
-```
-make
-```
-
-# Usefull reference
-
-/opt/ros/jazzy/share/nvblox/nvblox_examples_bringup/
-
-# Usefull commands
-
-pkill -f ros2
-
-ros2 daemon stop
-ros2 daemon start
-
-ros2 launch moveit_setup_assistant setup_assistant.launch.py
-ros2 launch workcell_bringup workcell.launch.py
+```bash
 ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=true use_fake_hardware:=false
-ros2 launch workcell_bringup workcell.launch.py sim_gazebo:=false use_fake_hardware:=false
-
-ros2 run tf2_tools view_frames
-
-# Trubleshooting
-
-add this in .bashrc
-
-```
-export UV_SKIP_WHEEL_FILENAME_CHECK=1
+ros2 launch planning_bringup cumotion.launch.py
+ros2 launch vision nvblox.launch.py
+ros2 launch workcell_bringup rviz.launch.py rviz_namespace:=robot_1
 ```
 
-sudo apt install ros-jazzy-orbbec-description
+## References
 
-```bash
-export ISAAC_ROS_WS=/home/kaipis/Desktop/projects/robotics/ros2_cuda_robotic_ws
-NGC_ORG="nvidia"
-NGC_TEAM="isaac"
-PACKAGE_NAME="isaac_ros_nvblox"
-NGC_RESOURCE="isaac_ros_nvblox_assets"
-NGC_FILENAME="quickstart.tar.gz"
-MAJOR_VERSION=4
-MINOR_VERSION=4
-VERSION_REQ_URL="https://catalog.ngc.nvidia.com/api/resources/versions?orgName=$NGC_ORG&teamName=$NGC_TEAM&name=$NGC_RESOURCE&isPublic=true&pageNumber=0&pageSize=100&sortOrder=CREATED_DATE_DESC"
-AVAILABLE_VERSIONS=$(curl -s \
-    -H "Accept: application/json" "$VERSION_REQ_URL")
-LATEST_VERSION_ID=$(echo $AVAILABLE_VERSIONS | jq -r "
-    .recipeVersions[]
-    | .versionId as \$v
-    | \$v | select(test(\"^\\\\d+\\\\.\\\\d+\\\\.\\\\d+$\"))
-    | split(\".\") | {major: .[0]|tonumber, minor: .[1]|tonumber, patch: .[2]|tonumber}
-    | select(.major == $MAJOR_VERSION and .minor <= $MINOR_VERSION)
-    | \$v
-    " | sort -V | tail -n 1
-)
-if [ -z "$LATEST_VERSION_ID" ]; then
-    echo "No corresponding version found for Isaac ROS $MAJOR_VERSION.$MINOR_VERSION"
-    echo "Found versions:"
-    echo $AVAILABLE_VERSIONS | jq -r '.recipeVersions[].versionId'
-else
-    mkdir -p ${ISAAC_ROS_WS}/isaac_ros_assets && \
-    FILE_REQ_URL="https://api.ngc.nvidia.com/v2/resources/$NGC_ORG/$NGC_TEAM/$NGC_RESOURCE/\
-versions/$LATEST_VERSION_ID/files/$NGC_FILENAME" && \
-    curl -LO --request GET "${FILE_REQ_URL}" && \
-    tar -xf ${NGC_FILENAME} -C ${ISAAC_ROS_WS}/isaac_ros_assets && \
-    rm ${NGC_FILENAME}
-fi
-
-sudo apt update && sudo apt-get install -y ros-jazzy-isaac-ros-nvblox
-
-```
-
-make sure you have latest isaac ros cli
-
-```bash
-sudo apt-get update && sudo apt-get upgrade isaac-ros-cli
-```
-
-# Docker development
-
-sudo apt update
-sudo apt install docker-buildx
-
-create an nvidia account and [login -> account -> api key](https://org.ngc.nvidia.com/account/api-keys)
-
-docker login nvcr.io
-Username: Γράψτε ακριβώς τη λέξη $oauthtoken (συμπεριλαμβανομένου του δολαρίου).Password: Κάντε επικόλληση το API Key που αντίγραψατε από το site της NVIDIA.
-
-launch the container
-
-run_dev.sh
-
-the usaac ros common should be on 3.2-15 release
-
-https://direnv.net/
+- [Isaac ROS dev environment](https://nvidia-isaac-ros.github.io/concepts/dev_env/index.html)
+- [Isaac ROS getting started](https://nvidia-isaac-ros.github.io/getting_started/index.html)
+- [Isaac ROS cuMotion](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_cumotion/isaac_ros_cumotion/index.html)
+- [Isaac ROS nvblox quickstart](https://nvidia-isaac-ros.github.io/repositories_and_packages/isaac_ros_nvblox/isaac_ros_nvblox/index.html#quickstart)
+- [nvblox](https://nvidia-isaac.github.io/nvblox/v0.0.10/index.html)
+- [curobo](https://nvlabs.github.io/curobo/latest/getting-started/installation.html)
+- [Isaac Sim quick install](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/quick-install.html#isaac-sim-quick-install)
+- [Isaac Sim robot config generator (Lula)](https://docs.isaacsim.omniverse.nvidia.com/6.0.1/robot_setup_tutorials/tutorial_generate_robot_config.html)
+- [direnv](https://direnv.net/)
