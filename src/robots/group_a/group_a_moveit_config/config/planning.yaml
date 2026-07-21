@@ -1,0 +1,45 @@
+/**:
+  ros__parameters:
+    planning_pipelines:
+      pipeline_names:
+        ["ompl", "chomp", "stomp", "pilz_industrial_motion_planner"]
+      namespace: "move_group"
+
+    default_planning_pipeline: "ompl"
+    
+    ompl:
+      planning_plugin: "ompl_interface/OMPLPlanner"
+      request_adapters:
+        - default_planning_request_adapters/ResolveConstraintFrames
+        - default_planning_request_adapters/ValidateWorkspaceBounds
+        - default_planning_request_adapters/CheckStartStateBounds
+        - default_planning_request_adapters/CheckStartStateCollision
+        - default_planning_request_adapters/CheckForStackedConstraints
+      response_adapters:
+        - default_planning_response_adapters/AddTimeOptimalParameterization
+
+      # Global definition of your planner profiles
+      planner_configs:
+        RRTConnectkConfigDefault:
+          type: geometric::RRTConnect
+        PRMkConfigDefault:
+          type: geometric::PRM
+
+      # Bind profiles to your actual SRDF planning groups
+      ur:
+        default_planner_config: RRTConnectkConfigDefault
+        planner_configs:
+          - RRTConnectkConfigDefault
+          - PRMkConfigDefault
+
+      lift:
+        default_planner_config: RRTConnectkConfigDefault
+        planner_configs:
+          - RRTConnectkConfigDefault
+          - PRMkConfigDefault
+
+      all:
+        default_planner_config: RRTConnectkConfigDefault
+        planner_configs:
+          - RRTConnectkConfigDefault
+          - PRMkConfigDefault

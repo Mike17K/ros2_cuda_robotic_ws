@@ -1,0 +1,4 @@
+docker:
+  image:
+    additional_image_keys:
+      - cumotion_ws

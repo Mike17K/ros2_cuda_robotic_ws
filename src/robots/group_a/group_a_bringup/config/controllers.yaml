@@ -1,0 +1,78 @@
+/$(var namespace):
+  controller_manager:
+    ros__parameters:
+      update_rate: 500
+
+      joint_state_broadcaster:
+        type: joint_state_broadcaster/JointStateBroadcaster
+
+      lift_joint_trajectory_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
+
+      ur_joint_trajectory_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
+
+      all_joint_trajectory_controller:
+        type: joint_trajectory_controller/JointTrajectoryController
+
+  lift_joint_trajectory_controller:
+    ros__parameters:
+      allow_nonzero_velocity_at_trajectory_end: true
+      joints:
+        - $(var namespace)/$(var tf_prefix)lift_lower_joint # ← only joint names need the prefix
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      state_publish_rate: 10.0
+      action_monitor_rate: 10.0
+      allow_partial_joints_goal: false
+      constraints:
+        stopped_velocity_tolerance: 0.0
+        goal_time: 0.0
+
+  ur_joint_trajectory_controller:
+    ros__parameters:
+      allow_nonzero_velocity_at_trajectory_end: true
+      joints:
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
+        - $(var namespace)/$(var tf_prefix)ur_elbow_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      state_publish_rate: 100.0
+      action_monitor_rate: 20.0
+      allow_partial_joints_goal: false
+      constraints:
+        stopped_velocity_tolerance: 0.0
+        goal_time: 0.0
+
+  all_joint_trajectory_controller:
+    ros__parameters:
+      allow_nonzero_velocity_at_trajectory_end: true
+      joints:
+        - $(var namespace)/$(var tf_prefix)lift_lower_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_pan_joint
+        - $(var namespace)/$(var tf_prefix)ur_shoulder_lift_joint
+        - $(var namespace)/$(var tf_prefix)ur_elbow_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_1_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_2_joint
+        - $(var namespace)/$(var tf_prefix)ur_wrist_3_joint
+      command_interfaces:
+        - position
+      state_interfaces:
+        - position
+        - velocity
+      state_publish_rate: 100.0
+      action_monitor_rate: 20.0
+      allow_partial_joints_goal: false
+      constraints:
+        stopped_velocity_tolerance: 0.0
+        goal_time: 0.0

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="workcell_system" xmlns:xacro="http://ros.org">
+
+  <!-- Το κεντρικό frame του κόσμου -->
+  <link name="world" />
+
+  <!-- Παράδειγμα: Προσθήκη ενός στατικού στοιχείου (π.χ. ένα τραπέζι / βάση) -->
+  <link name="workcell_base_structure">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="3.0 2.0 0.1" /> <!-- Οι διαστάσεις του χώρου σας -->
+      </geometry>
+      <material name="light_grey">
+        <color rgba="0.7 0.7 0.7 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="3.0 2.0 0.1" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_to_workcell_joint" type="fixed">
+    <parent link="world" />
+    <child link="workcell_base_structure" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+</robot>

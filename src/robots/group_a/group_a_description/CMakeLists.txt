@@ -6,5 +6,9 @@ find_package(ament_cmake REQUIRED)
 install(DIRECTORY urdf/
   DESTINATION share/${PROJECT_NAME}/urdf
 )
+install(DIRECTORY config/
+  DESTINATION share/${PROJECT_NAME}/config
+)
+
 
 ament_package()

@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="group_a_robot"
+        params="
+        parent
+        tf_prefix=''
+        namespace=''
+        lift_type='ur_620'
+        ur_type='ur10'
+        sim_gazebo='true'
+        use_fake_hardware='false'
+        simulation_controllers='$(find group_a_bringup)/config/controllers.yaml'
+        *origin"
+    >
+
+        <!-- ── Derived prefixes from namespace ──────────────────────────────────
+             All links/joints in the kinematic chain get the namespace prefix.
+             This ensures each robot has a unique TF tree rooted at world.
+             lift_prefix : e.g. "robot_1/lift_"
+             ur_prefix   : e.g. "robot_1/ur_"
+
+        ──────────────────────────────────────────────────────────────────────── -->
+        <xacro:property name="prefix" value="${namespace}/${tf_prefix}" />
+        <xacro:property name="lift_prefix" value="${prefix}lift_" />
+        <xacro:property name="ur_prefix" value="${prefix}ur_" />
+
+        <!-- === Includes === -->
+        <xacro:include filename="$(find ewellix_description)/urdf/ewellix_macro.xacro" />
+        <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro" />
+        <xacro:include filename="$(find ur_description)/urdf/inc/ur_joint_control.xacro" />
+
+        <!-- === Ewellix Lift ────────────────────────────────────────────────────
+             prefix="${lift_prefix}" → all lift links become robot_1/lift_*
+             parent stays "world" (unprefixed global anchor)
+        ──────────────────────────────────────────────────────────────────────── -->
+        <xacro:ewellix_lift
+            parent="${parent}"
+            tf_prefix="${lift_prefix}"
+            add_plate="true"
+            add_mount="true"
+            parameters_file="$(find ewellix_description)/config/${lift_type}.yaml"
+            generate_ros2_control_tag="false"
+            use_fake_hardware="${use_fake_hardware}"
+            sim_gazebo="${sim_gazebo}"
+        >
+            <xacro:insert_block name="origin" />
+        </xacro:ewellix_lift>
+
+        <xacro:property name="parameters_file"
+            value="$(find ewellix_description)/config/${lift_type}.yaml" />
+        <xacro:property name="parameters"
+            value="${xacro.load_yaml(parameters_file)}" />
+        <!-- ROS 2 Controls -->
+        <ros2_control name="${tf_prefix}hardware" type="system">
+            <hardware>
+                <xacro:if value="${sim_gazebo}">
+                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+                </xacro:if>
+                <xacro:if value="${use_fake_hardware}">
+                    <plugin>mock_components/GenericSystem</plugin>
+                    <param name="state_following_offset">0.0</param>
+                    <param name="calculate_dynamics">true</param>
+                </xacro:if>
+                <xacro:unless value="${use_fake_hardware or sim_gazebo}">
+                    <plugin>ewellix_driver/EwellixHardwareInterface</plugin>
+                    <param name="port">${port}</param>
+                    <param name="baud">${baud}</param>
+                    <param name="timeout">${timeout}</param>
+                    <param name="conversion">${conversion}</param>
+                    <param name="rated_effort">${rated_effort}</param>
+                    <param name="tolerance">${tolerance}</param>
+                    <param name="encoder_limits_lower">${parameters.encoder_limits.lower}</param>
+                    <param name="encoder_limits_upper">${parameters.encoder_limits.upper}</param>
+                </xacro:unless>
+            </hardware>
+            <joint name="${lift_prefix}lower_joint">
+                <command_interface name="position" />
+                <state_interface name="position">
+                    <param name="initial_value">${parameters.lower.joint.limit.lower + 0.001}</param>
+                </state_interface>
+                <state_interface name="velocity" />
+                <state_interface name="effort" />
+            </joint>
+            <xacro:if value="${sim_gazebo or use_fake_hardware}">
+                <joint name="${lift_prefix}upper_joint">
+                    <param name="mimic">${lift_prefix}lower_joint</param>
+                    <param name="multiplier">1</param>
+                </joint>
+            </xacro:if>
+        </ros2_control>
+
+
+        <!-- === UR Arm ──────────────────────────────────────────────────────────
+             prefix="${ur_prefix}"       → all UR links become robot_1/ur_*
+             parent="${lift_prefix}mount"   → robot_1/lift_mount
+        ──────────────────────────────────────────────────────────────────────── -->
+        <xacro:ur_robot
+            name="${ur_type}"
+            tf_prefix="${ur_prefix}"
+            parent="${lift_prefix}mount"
+            joint_limits_parameters_file="$(find ur_description)/config/${ur_type}/joint_limits.yaml"
+            kinematics_parameters_file="$(find ur_description)/config/${ur_type}/default_kinematics.yaml"
+            physical_parameters_file="$(find ur_description)/config/${ur_type}/physical_parameters.yaml"
+            visual_parameters_file="$(find ur_description)/config/${ur_type}/visual_parameters.yaml"
+        >
+            <origin xyz="0 0 0" rpy="0 0 0" />
+        </xacro:ur_robot>
+
+        <!-- === UR ros2_control block ─────────────────────────────────────────── -->
+        <ros2_control name="${prefix}${ur_type}_hardware" type="system">
+            <hardware>
+                <xacro:if value="${sim_gazebo}">
+                    <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+                </xacro:if>
+                <xacro:unless value="${sim_gazebo}">
+                    <plugin>mock_components/GenericSystem</plugin>
+                </xacro:unless>
+            </hardware>
+            <xacro:ur_joint_control_description tf_prefix="${ur_prefix}" />
+        </ros2_control>
+
+        <!-- === Camera at UR end-effector ──────────────────────────────────────
+             Link names: ${prefix}camera_link  →  e.g. robot_1/camera_link
+             Parent:     ${ur_prefix}tool0         →  e.g. robot_1/ur_tool0
+        ──────────────────────────────────────────────────────────────────────── -->
+        <link name="${prefix}camera_link">
+            <visual>
+                <geometry>
+                    <box size="0.040 0.095 0.030" />
+                </geometry>
+                <material name="dark_grey">
+                    <color rgba="0.15 0.15 0.15 1.0" />
+                </material>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="0.040 0.095 0.030" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.120" />
+                <inertia ixx="0.000060" ixy="0.0" ixz="0.0"
+                    iyy="0.000060" iyz="0.0" izz="0.000060" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}camera_joint" type="fixed">
+            <parent link="${ur_prefix}tool0" />          <!-- robot_1/ur_tool0 -->
+            <child link="${prefix}camera_link" />   <!-- robot_1/camera_link -->
+            <origin xyz="0 0 0.020" rpy="0 0 0" />
+        </joint>
+
+        <!-- Optical frame -->
+        <link name="${prefix}camera_optical_frame" />
+        <joint name="${prefix}camera_optical_joint" type="fixed">
+            <parent link="${prefix}camera_link" />
+            <child link="${prefix}camera_optical_frame" />
+            <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}" />
+        </joint>
+
+        <!-- === Gazebo-only blocks ──────────────────────────────────────────── -->
+        <xacro:if value="${sim_gazebo}">
+            <gazebo>
+                <plugin filename="gz_ros2_control-system"
+                    name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                    <ros>
+                        <namespace>${namespace}</namespace>
+                    </ros>
+                    <parameters>${simulation_controllers}</parameters>
+                </plugin>
+            </gazebo>
+
+            <gazebo>
+                <plugin filename="libgz-sim-pose-publisher-system.so"
+                    name="gz::sim::systems::PosePublisher">
+                    <publish_link_pose>true</publish_link_pose>
+                    <publish_nested_model_pose>true</publish_nested_model_pose>
+                    <use_pose_vector_msg>true</use_pose_vector_msg>
+                    <update_frequency>50</update_frequency>
+                </plugin>
+            </gazebo>
+            
+            <!-- Replace the single rgbd_camera sensor with two sensors: depth + rgb -->
+            <gazebo reference="${prefix}camera_link">
+                <sensor name="${prefix}depth_camera" type="depth_camera">
+                    <camera>
+                        <horizontal_fov>1.2120256</horizontal_fov>
+                        <image>
+                            <width>320</width>
+                            <height>240</height>
+                            <format>R_FLOAT32</format>
+                        </image>
+                        <clip>
+                            <near>0.10</near>
+                            <far>3.0</far>
+                        </clip>
+                        <optical_frame_id>${prefix}camera_optical_frame</optical_frame_id>
+                    </camera>
+                    <always_on>1</always_on>
+                    <update_rate>10</update_rate>
+                    <visualize>false</visualize>
+                    <topic>${namespace}/camera/depth</topic>
+                </sensor>
+
+                <sensor name="${prefix}rgb_camera" type="camera">
+                    <camera>
+                        <horizontal_fov>1.2120256</horizontal_fov>
+                        <image>
+                            <width>320</width>
+                            <height>240</height>
+                            <format>R8G8B8</format>
+                        </image>
+                        <clip>
+                            <near>0.10</near>
+                            <far>3.0</far>
+                        </clip>
+                        <noise>
+                            <type>gaussian</type>
+                            <mean>0.0</mean>
+                            <stddev>0.007</stddev>
+                        </noise>
+                        <optical_frame_id>${prefix}camera_optical_frame</optical_frame_id>
+                    </camera>
+                    <always_on>1</always_on>
+                    <update_rate>10</update_rate>
+                    <visualize>false</visualize>
+                    <topic>${namespace}/camera/color</topic>
+                </sensor>
+            </gazebo>
+        </xacro:if>
+
+    </xacro:macro>
+</robot>

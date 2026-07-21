@@ -1,0 +1,42 @@
+# src/robots/group_a/group_a_bringup/config/gz_bridge.yaml
+
+# ── Orbbec camera ──────────────────────────────────────────────────────────────
+# - ros_topic_name: "/$(var namespace)/camera/depth/points"
+#   gz_topic_name: "/$(var namespace)/camera/depth/points"
+#   ros_type_name: "sensor_msgs/msg/PointCloud2"
+#   gz_type_name: "gz.msgs.PointCloud2"
+#   direction: GZ_TO_ROS
+
+- ros_topic_name: "/$(var namespace)/camera/depth"
+  gz_topic_name: "/$(var namespace)/camera/depth"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/$(var namespace)/camera/color"
+  gz_topic_name: "/$(var namespace)/camera/color"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/$(var namespace)/camera/camera_info"
+  gz_topic_name: "/$(var namespace)/camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# ── Odometry (from PosePublisher plugin) ───────────────────────────────────────
+
+- ros_topic_name: "/$(var namespace)/pose"
+  gz_topic_name: "/model/$(var namespace)/pose"
+  ros_type_name: "geometry_msgs/msg/PoseArray"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
+
+# ── TF (from PosePublisher plugin) ─────────────────────────────────────────────
+
+- ros_topic_name: "/tf"
+  gz_topic_name: "/$(var namespace)/tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS

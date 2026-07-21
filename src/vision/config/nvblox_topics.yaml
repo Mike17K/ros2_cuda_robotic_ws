@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    robot_name: "robot_1"
+    depth_image_topics: ["robot_1/camera/depth"]
+    depth_info_topics: ["robot_1/camera/camera_info"]
+    color_image_topics: ["robot_1/camera/color"]
+    color_info_topics: ["robot_1/camera/camera_info"]
+    pose_topics: ["robot_1/pose"]
