@@ -9,3 +9,5 @@ this is why the sensors_3d.yaml file is commented out in the bringup.launch.py f
 # main working workspace goes for the total operation inside the docker ws
 
 because the rviz planning needs the cumotion moveit plugin, and also cumotion needs robot description files, instead of having duplicate packages for robots descriptions and moveit config its more optimal to be on the same docker workspace. now the catch if the gz sim for some reason does not work there i should be launching the workcell gz sim from the src and the rest of bringup seperate from the container to be spawned ( so not posible all in one launch but ok )
+
+we will make the docker cumotion ws as the main working workspace, keeping same structure for more later different docker containers

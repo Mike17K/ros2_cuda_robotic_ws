@@ -2,7 +2,7 @@
 SHELL      := /bin/bash
 ROS_DISTRO := jazzy
 WS_ROOT    := $(shell pwd)
-RUN        := cd $(WS_ROOT) && source /opt/ros/$(ROS_DISTRO)/setup.bash && export ISAAC_ROS_WS=$(WS_ROOT) && uv run
+RUN        := cd $(WS_ROOT) && source /opt/ros/$(ROS_DISTRO)/setup.bash && export ISAAC_ROS_WS=$(WS_ROOT) && 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/hpcx/ucx/lib:/opt/hpcx/ucc/lib
 
 # Colors
@@ -12,24 +12,16 @@ R=\033[0;31m
 C=\033[0;36m
 RESET=\033[0m
 
-.PHONY: all build debug builds pkg clean deps create-cpp create-py dev sync
+.PHONY: all build debug builds pkg clean deps create-cpp create-py dev
 
 CMAKE_DEFAULT_FLAGS = -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 
 
-# 1. Build & Sync (Το sync ενημερώνει το venv βάσει του pyproject.toml)
-all: sync build # rosdeps
+# 1. Build
+all: build
 
 run:
 	@echo -e "$(C)Running Isaac ROS...$(RESET)"
 	$(RUN)
-
-activate:
-	@echo -e "$(C)Activating virtual environment...$(RESET)"
-	source .venv/bin/activate
-
-sync:
-	@echo -e "$(C)Syncing virtual environment...$(RESET)"
-	uv sync
 
 rosdeps:
 	@echo -e "$(C)Installing rosdeps...$(RESET)"
@@ -70,11 +62,3 @@ deps:
 clean:
 	@echo -e "$(Y)Cleaning workspace...$(RESET)"
 	rm -rf build/ install/ log/
-
-
-# 6. UV Package Management
-# Χρήση: make add n=package_name
-add:
-	@if [ -z "$(n)" ]; then echo -e "$(R)Error: Provide package name (n=package)$(RESET)"; exit 1; fi
-	@echo -e "$(C)Adding package $(n) with uv...$(RESET)"
-	uv add $(n)
