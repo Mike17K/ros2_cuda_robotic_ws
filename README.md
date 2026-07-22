@@ -6,17 +6,46 @@ ROS 2 (Jazzy) workspace for multi-arm manipulation on lift-mounted UR arms ("gro
 
 All development happens inside a container built via the [Isaac ROS CLI](https://nvidia-isaac-ros.github.io/concepts/dev_env/index.html) — there is no host ROS install. Design rationale (why nvblox runs in static TSDF mode, why the workspace lives inside the container) is in [docs/STRUCTURAL_DESISIONS.md](docs/STRUCTURAL_DESISIONS.md).
 
+## Quickstart
+
+```bash
+git clone --recurse-submodules https://github.com/Mike17K/ros2_cuda_robotic_ws.git
+bash scripts/setup_host.sh
+bash scripts/build_docker_image.sh
+```
+
+after the build that takes about 1.5h in my pc the layered docker image will be created, and already you should be in a shell inside the container with the name admin if not just run
+
+```bash
+bash scripts/shell.sh
+```
+
+in the container run
+
+```bash
+make
+source install/setup.bash
+```
+
+after you can open a new terminal and just run the bellow and keep away from pressing any buttons for a while until the setup is finished
+
+```bash
+bash scripts/launch/launch_ws.sh
+```
+
+this will open the terminator with the commands ready to run
+
 ## Layout
 
-| Path | What |
-|---|---|
-| `src/workcell` | Gazebo world + shared workcell description |
-| `src/robots/group_a` | Robot description + MoveIt config for group_a |
-| `src/planning_bringup` | cuMotion planning launch/config |
-| `src/vision` | nvblox launch/config |
+| Path                          | What                                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| `src/workcell`                | Gazebo world + shared workcell description                                             |
+| `src/robots/group_a`          | Robot description + MoveIt config for group_a                                          |
+| `src/planning_bringup`        | cuMotion planning launch/config                                                        |
+| `src/vision`                  | nvblox launch/config                                                                   |
 | `src/isaac_ros_cumotion_fork` | Submodule, [Mike17K/isaac_ros_cumotion](https://github.com/Mike17K/isaac_ros_cumotion) |
-| `Dockerfile.cumotion_ws` | Layer added on top of the Isaac ROS base image |
-| `scripts/` | Entry points, see below |
+| `Dockerfile.cumotion_ws`      | Layer added on top of the Isaac ROS base image                                         |
+| `scripts/`                    | Entry points, see below                                                                |
 
 ## Prerequisites (host)
 
@@ -26,14 +55,14 @@ All development happens inside a container built via the [Isaac ROS CLI](https:/
 
 ## Entry points (`scripts/`)
 
-| Script | Purpose |
-|---|---|
-| `build_docker_image.sh` | Builds/activates the container (`isaac-ros activate --build-local`) |
-| `shell.sh` | Opens a shell in the running container |
-| `entrypoint.sh` | Container entrypoint, runs `make` |
-| `setup_workspace.sh` | First-boot dependency install inside the container |
-| `setup_host.sh` | One-off host setup (NVIDIA container toolkit + isaac-ros-cli) |
-| `launch/launch_ws.sh` | Opens a Terminator layout and launches workcell / cuMotion / RViz / nvblox panels |
+| Script                  | Purpose                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `build_docker_image.sh` | Builds/activates the container (`isaac-ros activate --build-local`)               |
+| `shell.sh`              | Opens a shell in the running container                                            |
+| `entrypoint.sh`         | Container entrypoint, runs `make`                                                 |
+| `setup_workspace.sh`    | First-boot dependency install inside the container                                |
+| `setup_host.sh`         | One-off host setup (NVIDIA container toolkit + isaac-ros-cli)                     |
+| `launch/launch_ws.sh`   | Opens a Terminator layout and launches workcell / cuMotion / RViz / nvblox panels |
 
 ## Build & run (inside the container)
 
