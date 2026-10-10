@@ -30,10 +30,10 @@ source install/setup.bash
 after you can open a new terminal and just run the bellow and keep away from pressing any buttons for a while until the setup is finished
 
 ```bash
-bash scripts/launch/launch_ws.sh
+bash scripts/launch/launch_from_host_ws.sh   # or launch_from_container_ws.sh inside the container
 ```
 
-this will open the terminator with the commands ready to run
+this will open Terminator with each command pre-filled in its pane (press Enter in the order of the pane numbers)
 
 ## Layout
 
@@ -62,7 +62,7 @@ this will open the terminator with the commands ready to run
 | `entrypoint.sh`         | Container entrypoint, runs `make`                                                 |
 | `setup_workspace.sh`    | First-boot dependency install inside the container                                |
 | `setup_host.sh`         | One-off host setup (NVIDIA container toolkit + isaac-ros-cli)                     |
-| `launch/launch_ws.sh`   | Opens a Terminator layout and launches workcell / cuMotion / RViz / nvblox panels |
+| `launch/launch_from_host_ws.sh` / `launch_from_container_ws.sh` | Open a Terminator layout with workcell / cuMotion / RViz / nvblox panes, each pre-filled with its command (Enter to run) |
 
 ## Build & run (inside the container)
 

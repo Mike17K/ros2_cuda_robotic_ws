@@ -13,6 +13,9 @@ default_joint_positions:
   $(var namespace)/$(var tf_prefix)ur_wrist_1_joint: -1.383
   $(var namespace)/$(var tf_prefix)ur_wrist_2_joint: -1.57
   $(var namespace)/$(var tf_prefix)ur_wrist_3_joint: 0.0
+  # Gripper fingers are not planned: locked open at their default position
+  $(var namespace)/$(var tf_prefix)gripper_left_finger_joint: 0.0
+  $(var namespace)/$(var tf_prefix)gripper_right_finger_joint: 0.0
 
 cspace:
   joint_names:
@@ -27,7 +30,7 @@ cspace:
   acceleration_limits: [2.0, 12.0, 12.0, 12.0, 12.0, 12.0, 12.0]
   jerk_limits: [50.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0]
 
-tool_frames: ["$(var namespace)/$(var tf_prefix)ur_tool0"]
+tool_frames: ["$(var namespace)/$(var tf_prefix)gripper_tcp"]
 
 collision:
   geometry: "combined_robot_collision_spheres"
@@ -41,6 +44,10 @@ collision:
     $(var namespace)/$(var tf_prefix)ur_wrist_2_link: 0.01
     $(var namespace)/$(var tf_prefix)ur_wrist_3_link: 0.01
     $(var namespace)/$(var tf_prefix)ur_tool0: 0.01
+    $(var namespace)/$(var tf_prefix)gripper_base_link: 0.01
+    $(var namespace)/$(var tf_prefix)gripper_left_finger_link: 0.005
+    $(var namespace)/$(var tf_prefix)gripper_right_finger_link: 0.005
+    $(var namespace)/$(var tf_prefix)camera_bracket_link: 0.01
     $(var namespace)/$(var tf_prefix)camera_link: 0.01
 
 self_collision:
@@ -58,6 +65,10 @@ self_collision:
     $(var namespace)/$(var tf_prefix)ur_wrist_1_link: ["$(var namespace)/$(var tf_prefix)ur_wrist_2_link", "$(var namespace)/$(var tf_prefix)ur_wrist_3_link"]
     $(var namespace)/$(var tf_prefix)ur_wrist_2_link: ["$(var namespace)/$(var tf_prefix)ur_wrist_3_link", "$(var namespace)/$(var tf_prefix)ur_tool0"]
     $(var namespace)/$(var tf_prefix)ur_wrist_3_link: ["$(var namespace)/$(var tf_prefix)ur_tool0"]
+    $(var namespace)/$(var tf_prefix)gripper_base_link: ["$(var namespace)/$(var tf_prefix)ur_tool0", "$(var namespace)/$(var tf_prefix)ur_wrist_3_link", "$(var namespace)/$(var tf_prefix)gripper_left_finger_link", "$(var namespace)/$(var tf_prefix)gripper_right_finger_link", "$(var namespace)/$(var tf_prefix)camera_bracket_link", "$(var namespace)/$(var tf_prefix)camera_link"]
+    $(var namespace)/$(var tf_prefix)gripper_left_finger_link: ["$(var namespace)/$(var tf_prefix)gripper_right_finger_link", "$(var namespace)/$(var tf_prefix)camera_bracket_link", "$(var namespace)/$(var tf_prefix)camera_link"]
+    $(var namespace)/$(var tf_prefix)gripper_right_finger_link: ["$(var namespace)/$(var tf_prefix)camera_bracket_link", "$(var namespace)/$(var tf_prefix)camera_link"]
+    $(var namespace)/$(var tf_prefix)camera_bracket_link: ["$(var namespace)/$(var tf_prefix)camera_link", "$(var namespace)/$(var tf_prefix)ur_wrist_3_link"]
     $(var namespace)/$(var tf_prefix)camera_link: ["$(var namespace)/$(var tf_prefix)ur_tool0", "$(var namespace)/$(var tf_prefix)ur_wrist_3_link"]
 
 geometry:
@@ -114,5 +125,21 @@ geometry:
       $(var namespace)/$(var tf_prefix)ur_wrist_3_link:
         - center: [0, 0, 0]
           radius: 0.04
-      $(var namespace)/$(var tf_prefix)ur_tool0:
+      $(var namespace)/$(var tf_prefix)gripper_base_link:
+        - center: [0, 0, 0.035]
+          radius: 0.05
+        - center: [0, 0.04, 0.035]
+          radius: 0.04
+        - center: [0, -0.04, 0.035]
+          radius: 0.04
+      $(var namespace)/$(var tf_prefix)gripper_left_finger_link:
+        - center: [0, 0.005, 0.03]
+          radius: 0.015
+      $(var namespace)/$(var tf_prefix)gripper_right_finger_link:
+        - center: [0, -0.005, 0.03]
+          radius: 0.015
       $(var namespace)/$(var tf_prefix)camera_link:
+        - center: [0, 0.03, 0]
+          radius: 0.02
+        - center: [0, -0.03, 0]
+          radius: 0.02

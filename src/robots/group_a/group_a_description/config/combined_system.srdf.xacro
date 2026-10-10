@@ -22,6 +22,10 @@ group_a_moveit_config package. The original file is located at:
         <chain base_link="$(arg namespace)/$(arg tf_prefix)ur_base_link"
             tip_link="$(arg namespace)/$(arg tf_prefix)ur_ft_frame" />
     </group>
+    <group name="gripper">
+        <joint name="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_joint" />
+        <joint name="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_joint" />
+    </group>
     <!--VIRTUAL
     JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame
     of reference (considered fixed with respect to the robot)-->
@@ -36,7 +40,7 @@ group_a_moveit_config package. The original file is located at:
     <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
         link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Never" />
     <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
-        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent" />
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Never" />
     <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
         link2="$(arg namespace)/$(arg tf_prefix)lift_lower_link" reason="Adjacent" />
     <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)lift_base_link"
@@ -107,5 +111,43 @@ group_a_moveit_config package. The original file is located at:
         link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Never" />
     <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link"
         link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_tool0" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_1_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)camera_bracket_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_base_link"
+        link2="$(arg namespace)/$(arg tf_prefix)camera_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_bracket_link"
+        link2="$(arg namespace)/$(arg tf_prefix)camera_link" reason="Adjacent" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_bracket_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_bracket_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_bracket_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)camera_link"
+        link2="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_3_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_left_finger_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Never" />
+    <disable_collisions link1="$(arg namespace)/$(arg tf_prefix)gripper_right_finger_link"
+        link2="$(arg namespace)/$(arg tf_prefix)ur_wrist_2_link" reason="Never" />
 
 </robot>

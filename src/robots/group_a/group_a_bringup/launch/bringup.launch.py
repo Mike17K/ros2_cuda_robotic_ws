@@ -227,6 +227,7 @@ def launch_setup(context):
         arguments=[
             "joint_state_broadcaster",
             "all_joint_trajectory_controller",
+            "gripper_controller",
             "--controller-manager",
             f"/{namespace}/controller_manager",
             "--controller-manager-timeout",

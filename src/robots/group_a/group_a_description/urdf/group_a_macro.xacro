@@ -118,12 +118,156 @@
                 </xacro:unless>
             </hardware>
             <xacro:ur_joint_control_description tf_prefix="${ur_prefix}" />
+            <!-- Parallel gripper: both fingers are commanded (Gazebo's physics engine
+                 has no mimic-joint support, so a mimic right finger stays put) -->
+            <xacro:macro name="gripper_finger_control" params="name">
+                <joint name="${prefix}gripper_${name}_finger_joint">
+                    <command_interface name="position" />
+                    <state_interface name="position">
+                        <param name="initial_value">0.0</param>
+                    </state_interface>
+                    <state_interface name="velocity" />
+                </joint>
+            </xacro:macro>
+            <xacro:gripper_finger_control name="left" />
+            <xacro:gripper_finger_control name="right" />
         </ros2_control>
 
-        <!-- === Camera at UR end-effector ──────────────────────────────────────
-             Link names: ${prefix}camera_link  →  e.g. robot_1/camera_link
-             Parent:     ${ur_prefix}tool0         →  e.g. robot_1/ur_tool0
+        <!-- === Parallel-jaw gripper at the UR flange ───────────────────────────
+             Frame: gripper_base_link sits on ur_tool0 (+Z = approach direction,
+             fingers close along Y). Fingers are prismatic along +Y, both position-controlled:
+             left 0 (closed) .. +stroke (open), right 0 (closed) .. -stroke (open).
+             gripper_tcp = centre point between the finger pads.
         ──────────────────────────────────────────────────────────────────────── -->
+        <xacro:property name="gripper_body_x" value="0.060" />
+        <xacro:property name="gripper_body_y" value="0.140" />
+        <xacro:property name="gripper_body_z" value="0.070" />
+        <xacro:property name="finger_x" value="0.020" />
+        <xacro:property name="finger_y" value="0.010" />
+        <xacro:property name="finger_z" value="0.060" />
+        <xacro:property name="finger_stroke" value="0.040" />
+        <xacro:property name="finger_limit_margin" value="0.002" />
+
+        <link name="${prefix}gripper_base_link">
+            <visual>
+                <origin xyz="0 0 ${gripper_body_z / 2}" rpy="0 0 0" />
+                <geometry>
+                    <box size="${gripper_body_x} ${gripper_body_y} ${gripper_body_z}" />
+                </geometry>
+                <material name="gripper_grey">
+                    <color rgba="0.25 0.25 0.28 1.0" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 ${gripper_body_z / 2}" rpy="0 0 0" />
+                <geometry>
+                    <box size="${gripper_body_x} ${gripper_body_y} ${gripper_body_z}" />
+                </geometry>
+            </collision>
+            <inertial>
+                <origin xyz="0 0 ${gripper_body_z / 2}" rpy="0 0 0" />
+                <mass value="0.80" />
+                <inertia ixx="0.0013" ixy="0.0" ixz="0.0" iyy="0.0007" iyz="0.0" izz="0.0017" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}gripper_mount_joint" type="fixed">
+            <parent link="${ur_prefix}tool0" />
+            <child link="${prefix}gripper_base_link" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+        </joint>
+
+        <!-- side: +1 = left finger (+Y, opens towards +Y), -1 = right finger -->
+        <xacro:macro name="gripper_finger" params="name side">
+            <link name="${prefix}gripper_${name}_finger_link">
+                <visual>
+                    <origin xyz="0 ${side * finger_y / 2} ${finger_z / 2}" rpy="0 0 0" />
+                    <geometry>
+                        <box size="${finger_x} ${finger_y} ${finger_z}" />
+                    </geometry>
+                    <material name="finger_black">
+                        <color rgba="0.05 0.05 0.05 1.0" />
+                    </material>
+                </visual>
+                <collision>
+                    <origin xyz="0 ${side * finger_y / 2} ${finger_z / 2}" rpy="0 0 0" />
+                    <geometry>
+                        <box size="${finger_x} ${finger_y} ${finger_z}" />
+                    </geometry>
+                </collision>
+                <inertial>
+                    <origin xyz="0 ${side * finger_y / 2} ${finger_z / 2}" rpy="0 0 0" />
+                    <mass value="0.05" />
+                    <inertia ixx="0.00002" ixy="0.0" ixz="0.0" iyy="0.00002" iyz="0.0" izz="0.00001" />
+                </inertial>
+            </link>
+
+            <joint name="${prefix}gripper_${name}_finger_joint" type="prismatic">
+                <parent link="${prefix}gripper_base_link" />
+                <child link="${prefix}gripper_${name}_finger_link" />
+                <origin xyz="0 0 ${gripper_body_z}" rpy="0 0 0" />
+                <!-- Both fingers share the +Y axis (a flipped -Y axis on the right
+                     finger would not move in Gazebo): left opens to +stroke,
+                     right opens to -stroke. Limits get a small margin beyond
+                     the commanded 0..+-stroke range so the rest position (0)
+                     and the open end are never exactly on the hard limit -
+                     some physics engines refuse further motion once a joint
+                     sits right on its limit. -->
+                <axis xyz="0 1 0" />
+                <dynamics damping="0.1" friction="0.1" />
+                <limit lower="${min(side * finger_stroke, 0.0) - finger_limit_margin}"
+                    upper="${max(side * finger_stroke, 0.0) + finger_limit_margin}" effort="500.0"
+                    velocity="0.2" />
+            </joint>
+        </xacro:macro>
+
+        <xacro:gripper_finger name="left" side="1" />
+        <xacro:gripper_finger name="right" side="-1" />
+
+        <link name="${prefix}gripper_tcp" />
+        <joint name="${prefix}gripper_tcp_joint" type="fixed">
+            <parent link="${prefix}gripper_base_link" />
+            <child link="${prefix}gripper_tcp" />
+            <origin xyz="0 0 ${gripper_body_z + finger_z - 0.010}" rpy="0 0 0" />
+        </joint>
+
+        <!-- === Camera on the gripper's side ────────────────────────────────────
+             Mounted on a bracket on the gripper body's +X face (the fingers
+             move along Y, so +X is never swept by them), looking along the
+             gripper approach direction (+Z of tool0). The Gazebo camera looks
+             along its link's +X, hence camera_joint's rpy="0 -pi/2 0" (X -> +Z).
+             camera_x keeps the fingers outside the horizontal FOV (+-35 deg)
+             at the 0.10 m near clip, so they do not show up in the image.
+             Link names: ${prefix}camera_link  →  e.g. robot_1/camera_link
+        ──────────────────────────────────────────────────────────────────────── -->
+        <xacro:property name="camera_x" value="${gripper_body_x / 2 + 0.055}" />
+        <xacro:property name="camera_z" value="0.020" />
+
+        <link name="${prefix}camera_bracket_link">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <box size="${camera_x - gripper_body_x / 2} 0.060 0.020" />
+                </geometry>
+                <material name="gripper_grey" />
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${camera_x - gripper_body_x / 2} 0.060 0.020" />
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.05" />
+                <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}camera_bracket_joint" type="fixed">
+            <parent link="${prefix}gripper_base_link" />
+            <child link="${prefix}camera_bracket_link" />
+            <origin xyz="${(camera_x + gripper_body_x / 2) / 2} 0 ${camera_z}" rpy="0 0 0" />
+        </joint>
+
         <link name="${prefix}camera_link">
             <visual>
                 <geometry>
@@ -146,9 +290,9 @@
         </link>
 
         <joint name="${prefix}camera_joint" type="fixed">
-            <parent link="${ur_prefix}tool0" />          <!-- robot_1/ur_tool0 -->
-            <child link="${prefix}camera_link" />   <!-- robot_1/camera_link -->
-            <origin xyz="0 0 0.020" rpy="0 0 0" />
+            <parent link="${prefix}gripper_base_link" />
+            <child link="${prefix}camera_link" />
+            <origin xyz="${camera_x} 0 ${camera_z}" rpy="0 ${-pi/2} 0" />
         </joint>
 
         <!-- Optical frame -->
@@ -180,7 +324,7 @@
                     <update_frequency>50</update_frequency>
                 </plugin>
             </gazebo>
-            
+
             <!-- Replace the single rgbd_camera sensor with two sensors: depth + rgb -->
             <gazebo reference="${prefix}camera_link">
                 <sensor name="${prefix}depth_camera" type="depth_camera">
